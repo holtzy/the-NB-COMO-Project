@@ -49,7 +49,7 @@ About us
 --------
 
 John Mc Grath: [homepage](http://researchers.uq.edu.au/researcher/6724)   
-Oleguer Plana Ripoll: [homepage]("https://www.researchgate.net/profile/Oleguer_Plana-Ripoll")  
-Yan Holtz: [contact](https://holtzyan.wordpress.com)  
+Oleguer Plana Ripoll: [homepage](https://www.researchgate.net/profile/Oleguer_Plana-Ripoll)  
+Yan Holtz: [homepage](https://holtzyan.wordpress.com)  
   
 
