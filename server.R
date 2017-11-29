@@ -1,0 +1,538 @@
+	# ------------------------------------
+	#
+	#	The COMO project
+	#
+	# ------------------------------------
+
+
+# Some stuff you need to explain and remember at the begining of the script
+
+# open server
+shinyServer(function(input, output) {
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # LINK ICD10 / ICD8
+  # ------------------------------------------------------------------------------
+		
+		# Show it in a table
+		observe({
+
+			# Make the data nicer to see
+			don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
+			colnames(don)=gsub("\\.", " ", colnames(don))
+
+			# render the table
+			output$ICD10table <- DT::renderDataTable(
+					DT::datatable( don , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
+			)
+		})
+
+
+
+
+
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Circle Packing
+  # ------------------------------------------------------------------------------
+
+	output$plot_circlepack=renderggiraph({ 
+
+		# Make the data nicer to see
+		don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
+		colnames(don)=gsub("\\.", " ", colnames(don))
+
+		# Generate the layout 
+		packing <- circleProgressiveLayout(don[,6], sizetype='area')
+		packing$radius=0.98*packing$radius
+		my_n_points=60
+		dat.gg <- circleLayoutVertices(packing, npoints=my_n_points)
+		dat.gg$id= rep( don[,2], each=my_n_points+1)
+
+		# Add info
+		packing$disease=don[,2]
+		packing$N=don[,6]
+
+		# Prepare text to display on hover
+		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of case:", packing$N, "\n\n",  "\n", "Shall we add a link?", '</span>')
+		dat.gg$text= rep( packing$text, each=my_n_points+1)
+  
+		# Make the plot
+		p=ggplot() + 
+  			geom_polygon_interactive(data = dat.gg, aes(x, y, group = id, fill=as.factor(id), tooltip = text), colour = "black", alpha = 0.6, size=0.1) +
+ 		 	scale_fill_manual( values = color_attribution ) +
+ 		 	
+ 		 	geom_text(data = packing, aes(x, y, size=N, label = gsub(" ", "\n", disease))) +
+ 		 	scale_size_continuous(range = c(0.8,3)) +
+
+ 		 	theme_void()+
+ 		 	theme(
+  		  		legend.position="none",
+   			) +
+   			coord_equal()
+
+  		ggiraph(ggobj = p, width_svg = 3, height_svg = 3)
+		
+	})
+
+
+
+
+
+
+   
+
+ 
+
+
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # HISTOGRAM DOTPLOT
+  # ------------------------------------------------------------------------------
+
+	output$plot_longbar=renderPlotly({ 
+
+		# Filter the data following the choice of the user
+		if( input$sex_longbar=="all" ){ 
+			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
+		}else{
+			don = data %>% filter(model=="sex_basic_confounders" & sex==input$sex_longbar & !is.na(HR) )
+		}
+		 
+		# Prepare don for a hacked histogram
+		don = don %>% 
+			arrange(HR) %>% 
+			mutate(HR_rounded = HR - (HR %% 2)) %>% 
+			mutate(y=ave(HR_rounded, HR_rounded, FUN=seq_along)) %>%
+		  	mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
+		 
+		# Make the plot
+		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
+      		  geom_point( aes(color=y, text=text), size=5 ) +
+		      xlab('Hazard Ratio') +
+		      ylab('Number of pair of diseases') +
+		      ylim(1,18) +
+		      xlim(0,70) +
+		      geom_vline(aes(xintercept = 1), color="grey", linetype="dashed") +
+		      theme_classic() +
+		      theme(
+		      	legend.position="none",
+		      	axis.line.y = element_blank(),
+		      	axis.text=element_text(size=15)
+		      )
+		
+		ggplotly(p, tooltip="text")
+
+
+	})
+
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # SANKEY diagram
+  # ------------------------------------------------------------------------------
+
+	output$plot_sankey=renderSankeyNetwork({ 
+
+		# Prepare data?
+		don = data %>% 
+		  
+			# Select subset of the data
+			filter(model=="sex_basic_confounders" & sex==input$sex_circularplot & !is.na(HR)  & HR>input$sankey_thres) %>% 
+		    
+  			# make a difference between outcome and exposure (I add a space to outcome)
+  			select(exposure2, outcome2, HR) %>% 
+  			
+  			# Make sure to respect the ICD10 order
+  			arrange(exposure2, outcome2) %>%
+  			
+  			# Add a space after outcome to make it slightly different
+  			mutate(outcome2=paste(outcome2, " ", sep=""))
+
+ 		# Make a data frame with nodes
+ 		nodes=data.frame( ID = c(as.character(unique(don$exposure2)), as.character(unique(don$outcome2)) ) )
+ 
+ 		# Make a data frame with the links
+ 		don$outcome=match(don$outcome2, nodes$ID)-1
+		don$exposure=match(don$exposure2, nodes$ID)-1
+
+		# Prepare a color scale:
+		ColourScal ='d3.scaleOrdinal() .domain(["Organic disorders" , "Substance abuse" , "Schizophrenia and related","Mood disorders" ,"Neurotic disorders", "Eating disorders" ,"Personality disorders", "Mental retardation", "Developmental disorders", "Behavioral disorders"]) .range(["#FDE725FF","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
+
+  		# Make the plot
+ 		sankeyNetwork(Links = don, Nodes = nodes,
+             Source = "exposure", Target = "outcome",
+             Value = "HR", NodeID = "ID", nodeWidth=40, fontSize=13,
+             nodePadding=20, colourScale=ColourScal, width=2000, height=2000 ) #, LinkGroup="group") 
+	})
+
+
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Heatmap
+  # ------------------------------------------------------------------------------
+
+	output$plot_heat2=renderPlotly({ 
+
+		# Recover what user choosed.
+		mysex=input$sex_heatmap
+
+		p=data %>%  
+		  filter(model=="sex_basic_confounders" & sex==mysex) %>%
+		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disease: ", exposure2, "\n\n", "Outcome Disease: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), "\n"), '</span>') %>%
+		  ggplot(aes( x=exposure2, y=outcome2)) + 
+			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
+			scale_fill_gradient(low = "white", high = "steelblue") +
+			theme_grey(base_size = 9) + 
+			labs(x = "Exposure", y = "Outcome") + 
+			scale_x_discrete(expand = c(0, 0)) +
+			scale_y_discrete(expand = c(0, 0)) + 
+			theme(
+			  #legend.position = "none", 
+			  axis.ticks = element_blank(), 
+			  axis.text.x = element_text(size = 10, angle = 45, hjust = 0, colour = "grey50"),
+			  axis.title = element_text(size = 14, angle = 0, hjust = 1, colour = "#2ecc71"),
+			  axis.text.y = element_text(size = 10, angle = 0, hjust = 0, colour = "grey50"),
+			  plot.margin = unit(c(1.8,1.8,1.8,1.8), "cm")
+			)
+		
+		ggplotly(p, tooltip="text")
+	
+	})
+
+
+
+
+
+
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Lollipop
+  # ------------------------------------------------------------------------------
+
+	output$plot_bar=renderPlotly({ 
+
+		# Recover what user choosed.
+		mysex=input$sex_symetry_plot
+		mydisease=input$disease_symetry_plot
+
+		# Create 2 datasets: every disease --> schizophrenia and return
+		a=data %>% 
+  		filter( model=="sex_basic_confounders", exposure2==mydisease, sex==mysex) %>%
+		  	select(outcome2, HR)
+		b=data %>% 
+  			filter( model=="sex_basic_confounders", outcome2==mydisease, sex==mysex) %>%
+  			select(exposure2, HR)
+		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
+		
+		# Max of the HRs:
+		mymax=max(c(tmp$HR.x, tmp$HR.y))
+
+		# plot
+		tmp %>%
+  			mutate(diff=abs(HR.x-HR.y)) %>%
+  			arrange(HR.x) %>%
+  			mutate(outcome2 = factor(outcome2, outcome2)) %>%
+
+			# Prepare text
+			mutate(text1=paste("From: ", mydisease, "\n\nTo: ", outcome2, "\n\nHazard Ratio: ", round(HR.x,2), sep="" )) %>%
+			mutate(text2=paste("From: ", outcome2, "\n\nTo: ", mydisease, "\n\nHazard Ratio: ", round(HR.y,2), sep="" )) %>%
+
+  			ggplot( aes(x=outcome2)) +
+  				geom_segment(aes(x=outcome2, y=HR.x, xend=outcome2, yend=HR.y), color="grey", size=1) +
+  				geom_point(aes(y=HR.x, text=text1), color="#2ecc71", size=5) +
+  				geom_point(aes(y=HR.y, text=text2), color="orange", size=5) +
+  				theme_bw() +
+
+		    	ggtitle(paste("Link between ", mydisease, " and: ", sep="")) +
+		    	ylab("Hazard Ratio") +
+		    	theme_classic() +
+		    	theme(
+		    		plot.title = element_text(hjust = 1),
+		      		axis.title.y=element_blank(),		      		
+		      		axis.text.y = element_text(colour="grey", size=13),
+		      		axis.line.y=element_blank(),
+		      		axis.ticks.y=element_blank()
+		    	) +
+
+  			#geom_text( aes(x=2, y=0.7*mymax, label=paste("Linking to", mydisease, sep=" ")), color="orange", size=5, hjust=1) +
+			#geom_text( aes(x=3, y=0.7*mymax, label=paste("Coming from", mydisease, sep=" ")), color="#2ecc71", size=5 , hjust=1) +
+
+		    coord_flip()
+
+		  ggplotly(tooltip="text")
+				  
+
+	
+	})
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Symmetric Barplot
+  # ------------------------------------------------------------------------------
+
+	output$plot_symbar=renderPlot({ 
+
+		# Recover what user choosed.
+		mysex=input$sex_symetry_plot
+		mydisease=input$disease_symetry_plot
+
+
+		# Filter the data following the choice of the user
+		if( mysex=="all" ){ 
+			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
+		}else{
+			don = data %>% filter(model=="sex_basic_confounders" & sex==mysex & !is.na(HR) )
+		}
+
+		# I put the levels in the other side to make them appear in the normal order on the plot
+		don = don %>%  mutate( exposure2 = factor(exposure2, levels=rev(mylevels))) %>%  mutate( outcome2 = factor( outcome2, levels=rev(mylevels)))
+
+		# Create 2 datasets: every disease --> schizophrenia and return
+		a=don %>% 
+		  filter( exposure2==mydisease ) %>%
+		  select( outcome2, HR, CI_left, CI_right)
+		b=don %>% 
+		  filter( outcome2==mydisease ) %>%
+		  select( exposure2, HR, CI_left, CI_right)
+		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
+
+		print("---")
+		print(head(tmp))
+
+		#Create a theme
+		mytheme =  theme(
+		  legend.position="none",
+		  axis.text.y = element_blank(),
+		  axis.ticks.y = element_blank(),
+		  axis.title.y = element_blank(),
+
+		  axis.text.x = element_text(size=14),
+		  axis.ticks.x = element_line(),
+		  axis.title.x = element_text(size=16),
+
+		  axis.line = element_blank(),
+		  plot.margin = unit(rep(0,4), "cm")
+		)
+		
+		# Maximum?
+		mymax=max(c(tmp$CI_right.x, tmp$CI_right.y))
+
+		# p1
+		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
+		  geom_bar(stat="identity") + 
+		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
+		  ylim(0, mymax) +
+		  scale_y_reverse() +
+		  coord_flip() +
+		  scale_fill_viridis(discrete=TRUE) +
+		  theme_classic() +
+		  ylab("Hazard Ratio") +
+		  mytheme
+
+		# Create a scatterplot (plot2)
+		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
+		  geom_bar(stat="identity") + 
+		  ylim(0, mymax) +
+		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
+		  coord_flip() +
+		  scale_fill_viridis(discrete=TRUE) +
+		  theme_classic() +
+		  ylab("Hazard Ratio") +
+		  mytheme
+
+		p3 = ggplot(tmp, aes(x=outcome2, y=-100, color=outcome2)) + 
+		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5) +
+		  scale_color_viridis(discrete=TRUE) +
+		  coord_flip() +
+		  theme_classic() +
+		  ylab("Hazard Ratio") +
+		  mytheme +
+		  theme(
+		    axis.ticks.x = element_line(color="white"),
+		    axis.title.x = element_text(color="white"),
+		    axis.text.x = element_text(color="white")
+		  ) 
+
+		# Arrange and display the plots into a 2x1 grid
+		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
+		grid.arrange( p1, p3, p2, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
+	
+	})
+
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Line plot time
+  # ------------------------------------------------------------------------------
+
+	output$plot_time=renderPlotly({ 
+
+		# Recover what user choosed.
+		mydisease=input$disease_time_plot
+
+		data %>% 
+		 	filter(substr(model, 1, 15)=="time_after_expo") %>%
+		 	mutate(time=as.numeric( gsub("time_after_expo_","", model))) %>%
+		 	filter( exposure2 == mydisease ) %>%
+
+			# Prepare text
+			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", time, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+		  
+
+		  	# Make the plot
+		  	ggplot( aes(x=time, color=outcome2)) +
+		    	geom_line( aes(y=HR), col="grey") +
+		    	geom_errorbar( aes(ymin=CI_left, ymax=CI_right), width=0.7) +
+		    	geom_point( aes(y=HR, text=text), size=3) +
+		    	scale_color_manual( values = color_attribution) +
+		    	geom_hline(yintercept = 1, color='red', alpha=0.9, linetype="dotted") +
+		    	scale_x_continuous( breaks = 1:7, labels=c("0-6m", "6-12m", "1-2y", "2-5y", "5-10y", "10-15y", "15+y")) +
+		    	scale_y_log10() +
+		    	xlab("") +
+		    	facet_wrap(~outcome2) +
+		    	theme( 
+		      		legend.position = "none",
+		      		axis.text.x = element_text(angle = 45, hjust=0.8),
+		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
+		      		strip.text.x = element_text(colour = "black", size=13),
+		      	)
+
+		ggplotly(tooltip="text")	 
+	
+	})
+
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # Scatterplot Sex Comparison
+  # ------------------------------------------------------------------------------
+
+	output$plot_sexcomp=renderPlotly({ 
+
+		# Recover what user choosed.
+		#mysex=input$sex_symetry_plot
+		mydisease=input$disease_time_plot
+
+		data %>%  
+		  filter(model=="sex_basic_confounders") %>% 
+		  select( outcome2, exposure2, sex, HR, CI_left, CI_right) %>%
+		  gather(variable, value, -(outcome2:sex)) %>%
+		  unite(temp, sex, variable) %>%
+		  spread(temp, value) %>%
+		  mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR for women: ", round(women_HR,1), " (", round(women_CI_left,1), " - ", round(women_CI_right,1), ")", "\n", "HR for men: ", round(men_HR,1) , " (", round(men_CI_left,1), " - ", round(women_CI_right,1), ")", sep="" )) %>%
+		  mutate(biggest=as.factor(ifelse(men_HR>women_HR,1,2))) %>%
+		  ggplot() +
+		    
+		    geom_segment( aes(x=men_HR, xend=men_HR, y=women_CI_left, yend=women_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
+		    geom_segment( aes(y=women_HR, yend=women_HR, x=men_CI_left, xend=men_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
+		    geom_point(aes(x=men_HR, y=women_HR, text=text, color=biggest)) +
+		    scale_colour_manual(values = c("#6699FF", "#CC99FF")) +
+		    xlim(0,50) + ylim(0,50) +
+		    
+		    geom_abline( intercept=0, slope=1, linetype="dotted") +
+		    theme(
+		    	legend.position="none"
+		    ) +
+		    labs(x="Hazard Ratios for men", y="Hazard Ratios for women") +
+
+		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higer HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
+
+		    
+		ggplotly(tooltip="text")
+
+	})
+
+
+
+
+  
+   
+  # ------------------------------------------------------------------------------
+  # RAW DATA
+  # ------------------------------------------------------------------------------
+		
+		# Show it in a table
+		observe({
+
+			# Make the data nicer to see
+			don=data %>% mutate(
+				exposure=gsub("expo_","",exposure),
+				personyears0=round(personyears0,1),	
+				personyears1=round(personyears1,1),	
+				HR=round(HR,2),
+				CI_left=round(CI_left,2),
+				CI_right=round(CI_right,2)
+				)
+			colnames(don)[1:4]=c("outcome_id", "outcome", "exposure_id", "exposure")
+
+			# render the table
+			output$raw_data <- DT::renderDataTable(
+					DT::datatable( don , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft' )  )
+			)
+		})
+
+		# Allow user to download it
+		output$load_ex_format1 <- downloadHandler(
+    		filename = "HR_comoproject.csv",
+			content <- function(file) {
+    			file.copy("DATA/pairwiseHR_updated.txt", file)
+  			}  
+  	)	
+
+
+
+
+
+
+# Close the ShinyServer  
+})
+  	  	
+
+
+
+
+
+
+
+
+
+
+
+

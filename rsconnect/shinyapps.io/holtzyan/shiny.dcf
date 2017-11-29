@@ -1,0 +1,9 @@
+name: shiny
+title:
+account: holtzyan
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 204100
+bundleId: 1080534
+url: https://holtzyan.shinyapps.io/shiny/
+when: 1510899352.25339

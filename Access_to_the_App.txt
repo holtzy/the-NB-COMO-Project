@@ -1,0 +1,22 @@
+
+
+	# ------------------------------------
+	#
+	#	The COMO project
+	#
+	# ------------------------------------
+
+
+# The App is currently hosted on the Rstudio server.
+
+
+# How to put the app online
+cd ~/Dropbox/QBI/2_DANISH_DATA_PROJECT/6_SHINY_APP_V3
+R
+library(rsconnect)
+rsconnect::setAccountInfo(name='holtzyan', token='A0EC60006796338FCB3CB16D46547DDB', secret='fJJgFpQentw3qokhurrgHGFVY/SlBy9P69q2r9L0')
+deployApp('~/Dropbox/QBI/2_DANISH_DATA_PROJECT/6_SHINY_APP_V3')
+#deployApp('/Users/yan/Desktop/TMPTMP')
+
+# Adresse de l'appli:
+
