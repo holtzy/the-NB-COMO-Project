@@ -20,10 +20,6 @@ shinyServer(function(input, output) {
 		# Show it in a table
 		observe({
 
-			# Make the data nicer to see
-			don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
-			colnames(don)=gsub("\\.", " ", colnames(don))
-
 			# render the table
 			output$ICD10table <- DT::renderDataTable(
 					DT::datatable( don , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
@@ -45,10 +41,6 @@ shinyServer(function(input, output) {
   # ------------------------------------------------------------------------------
 
 	output$plot_circlepack=renderggiraph({ 
-
-		# Make the data nicer to see
-		don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
-		colnames(don)=gsub("\\.", " ", colnames(don))
 
 		# Generate the layout 
 		packing <- circleProgressiveLayout(don[,6], sizetype='area')
@@ -107,9 +99,13 @@ shinyServer(function(input, output) {
 
 		# Filter the data following the choice of the user
 		if( input$sex_longbar=="all" ){ 
-			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
+			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
+			choice=as.numeric(input$model_dotplothisto)
+			don = data %>% filter(model==list[choice] & !is.na(HR) )
 		}else{
-			don = data %>% filter(model=="sex_basic_confounders" & sex==input$sex_longbar & !is.na(HR) )
+			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
+			choice=as.numeric(input$model_dotplothisto)
+			don = data %>% filter(model==list[choice] & sex==input$sex_longbar & !is.na(HR) )
 		}
 		 
 		# Prepare don for a hacked histogram
@@ -133,6 +129,9 @@ shinyServer(function(input, output) {
 		      	axis.line.y = element_blank(),
 		      	axis.text=element_text(size=15)
 		      )
+
+		# Eventually log scale?
+		if( input$log_dotplothisto == "log"){ p = p + scale_x_log10() }
 		
 		ggplotly(p, tooltip="text")
 
@@ -243,12 +242,19 @@ shinyServer(function(input, output) {
 		mysex=input$sex_symetry_plot
 		mydisease=input$disease_symetry_plot
 
+		# Filter the data following the choice of the user
+		if( mysex=="all" ){ 
+			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
+		}else{
+			don = data %>% filter(model=="sex_basic_confounders" & sex==mysex & !is.na(HR) )
+		}
+
 		# Create 2 datasets: every disease --> schizophrenia and return
-		a=data %>% 
-  		filter( model=="sex_basic_confounders", exposure2==mydisease, sex==mysex) %>%
+		a=don %>% 
+  			filter( exposure2==mydisease) %>%
 		  	select(outcome2, HR)
-		b=data %>% 
-  			filter( model=="sex_basic_confounders", outcome2==mydisease, sex==mysex) %>%
+		b=don %>% 
+  			filter( outcome2==mydisease) %>%
   			select(exposure2, HR)
 		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
 		
@@ -281,9 +287,6 @@ shinyServer(function(input, output) {
 		      		axis.line.y=element_blank(),
 		      		axis.ticks.y=element_blank()
 		    	) +
-
-  			#geom_text( aes(x=2, y=0.7*mymax, label=paste("Linking to", mydisease, sep=" ")), color="orange", size=5, hjust=1) +
-			#geom_text( aes(x=3, y=0.7*mymax, label=paste("Coming from", mydisease, sep=" ")), color="#2ecc71", size=5 , hjust=1) +
 
 		    coord_flip()
 
@@ -327,9 +330,6 @@ shinyServer(function(input, output) {
 		  filter( outcome2==mydisease ) %>%
 		  select( exposure2, HR, CI_left, CI_right)
 		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
-
-		print("---")
-		print(head(tmp))
 
 		#Create a theme
 		mytheme =  theme(
@@ -446,24 +446,31 @@ shinyServer(function(input, output) {
 
 	output$plot_sexcomp=renderPlotly({ 
 
-		# Recover what user choosed.
-		#mysex=input$sex_symetry_plot
-		mydisease=input$disease_time_plot
+		# Recover what model user choosed.
+		list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
+		choice=as.numeric(input$model_sexcomp)
+		mymodel=list[choice]
+	
 
-		data %>%  
-		  filter(model=="sex_basic_confounders") %>% 
+		# prepare data
+		tmp=data %>%  
+		  filter(model==mymodel) %>% 
 		  select( outcome2, exposure2, sex, HR, CI_left, CI_right) %>%
 		  gather(variable, value, -(outcome2:sex)) %>%
 		  unite(temp, sex, variable) %>%
 		  spread(temp, value) %>%
 		  mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR for women: ", round(women_HR,1), " (", round(women_CI_left,1), " - ", round(women_CI_right,1), ")", "\n", "HR for men: ", round(men_HR,1) , " (", round(men_CI_left,1), " - ", round(women_CI_right,1), ")", sep="" )) %>%
-		  mutate(biggest=as.factor(ifelse(men_HR>women_HR,1,2))) %>%
-		  ggplot() +
+		  mutate(biggest=as.factor(ifelse(men_HR>women_HR,1,2)))
+
+
+		# Make the plot
+		p=ggplot(tmp) +
 		    
 		    geom_segment( aes(x=men_HR, xend=men_HR, y=women_CI_left, yend=women_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_segment( aes(y=women_HR, yend=women_HR, x=men_CI_left, xend=men_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_point(aes(x=men_HR, y=women_HR, text=text, color=biggest)) +
 		    scale_colour_manual(values = c("#6699FF", "#CC99FF")) +
+	
 		    xlim(0,50) + ylim(0,50) +
 		    
 		    geom_abline( intercept=0, slope=1, linetype="dotted") +
@@ -471,11 +478,14 @@ shinyServer(function(input, output) {
 		    	legend.position="none"
 		    ) +
 		    labs(x="Hazard Ratios for men", y="Hazard Ratios for women") +
-
+		    coord_equal() +
 		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higer HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
 
-		    
-		ggplotly(tooltip="text")
+		
+		# Eventually log scale?
+		if( input$log_sexcomp == "log"){ p = p + scale_x_log10() + scale_y_log10() }
+
+		ggplotly(p, tooltip="text")
 
 	})
 

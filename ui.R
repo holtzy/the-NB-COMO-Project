@@ -141,7 +141,14 @@ conditionalPanel("input.plot_type == 1",
 		br(),
 		radioGroupButtons("sex_longbar", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 		column(6, offset=3, plotlyOutput("plot_longbar", height = "500px", width="900") ),
-		column(2, br(), br(), h3(tags$u(tags$b("Figure 4")),": Distribution of Hazard Ratios. Each dot represents a pair of disease."))
+		column(2, br(), br(), 
+			h3(tags$u(tags$b("Figure 4")),": Distribution of Hazard Ratios. Each dot represents a pair of disease."),
+			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Normal Scale"="normal"), selected="normal"),
+				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Basic confounder"="1", "Kessler Prev"="2", "Kessler Prev with Interaction"="3") )
+			)
+
+		)
 	),
 	br(),br(),br(),br(),	
 
@@ -250,13 +257,13 @@ conditionalPanel("input.plot_type == 1",
 	conditionalPanel("input.type_symetry_plot == 2",
 		fluidRow(align="center",
 			column(6, offset=3, plotlyOutput("plot_bar", height = 700, width="90%")),
-			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between diseases. Each line represents à pair of disease. The 2 hazard ratios are represented in green and orange."))
+			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between diseases. Each line represents à pair of disease. The 2 hazard ratios are represented in green and orange."))
 		)
 	),
 	conditionalPanel("input.type_symetry_plot == 1",
 		fluidRow(align="center",
 			column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
-			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."))
+			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."))
 		)
 	),
 	br(),
@@ -322,10 +329,17 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(), br(),br(),
-			plotlyOutput("plot_sexcomp", height = "800", width="800"),
+			plotlyOutput("plot_sexcomp", height = "700", width="90%"),
 			br()
 		),
-		column(3, align="left", br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 10")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines).") ),
+		column(3, align="left", 
+			br(),br(),br(),br(),br(),br(),br(),br(),br(),
+			h3(tags$u(tags$b("Figure 10")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
+			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Normal Scale"="normal"), selected="normal"),
+				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Basic confounder"="1", "Kessler Prev"="2", "Kessler Prev with Interaction"="3") )
+			)
+		),
 		br()
 	)
 
@@ -378,7 +392,7 @@ conditionalPanel("input.plot_type == 2",
 			"Last but not least, our paper in online",
 			br(),br(),
 			downloadButton("load_ex_format1", label = "Download"),
-			actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/';"), 
+			actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/the-NB-COMO-Project';"), 
 			actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://www.ncbi.nlm.nih.gov/pubmed/';"), 
 			br(),br()
 		)
@@ -486,7 +500,7 @@ conditionalPanel("input.plot_type == 3",
 			br(), br(),
 			"Created by", strong(a("Yan Holtz", style="color:lightblue", href="https://holtzyan.wordpress.com")), ".",
 			br(),
-			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/")), ".",
+			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/the-NB-COMO-Project")), ".",
 			br(),
 			"Copyright © 2017 The COMO Project",
 			br(), br(),br()

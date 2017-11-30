@@ -1,3 +1,10 @@
+
+
+
+
+/* ------------------------------------------------------------*/ 
+/* ---- GLOBAL -------*/
+
 /* Google Fonts */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
@@ -5,6 +12,15 @@
 body {
   font-family: 'Open Sans', 'sans-serif';
 }
+/* ------------------------------------------------------------*/ 
+
+
+
+
+
+
+/* ------------------------------------------------------------*/ 
+/* ---- TEXT -------*/
 
 /* Level 2 title */
 h2 {
@@ -36,8 +52,14 @@ h3 {
     color: #707070;
     font-style: italic;
 }
+/* ------------------------------------------------------------*/ 
 
 
+
+
+
+
+/* ------------------------------------------------------------*/ 
 /* Sliders */
 .irs-bar {
     border-top: 1px solid #2ecc71;
@@ -51,7 +73,14 @@ h3 {
 .irs-single {
     background: #2ecc71 none repeat scroll 0% 0%;
 }
+/* ------------------------------------------------------------*/ 
 
+
+
+
+
+/* ------------------------------------------------------------*/ 
+/* BUTTON */
 
 .btn {
   cursor: pointer;
@@ -65,7 +94,7 @@ h3 {
   -moz-transition: .3s;
   -o-transition: .3s;
   display: inline-block;
-    color: #2ecc71;
+  color: #2ecc71;
   border: 2px #2ecc71 solid;
 }
 
@@ -79,19 +108,27 @@ h3 {
     background-color: #2ecc71;
     border-color: #2ecc71;
 }
+
 .btn.active, .btn:active {
     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0) inset;
 }
 
+.btn-circle {
+    box-shadow: 0px 0px 0px #888888;
+}
+
+/* ------------------------------------------------------------*/ 
 
 
 
-#plot_type input[type='radio']:checked+span{ 
+
+/* #plot_type input[type='radio']:checked+span{ 
              color: red; 
              }
 #plot_type { 
     color: "blue";
 }
+*/
 
 
 

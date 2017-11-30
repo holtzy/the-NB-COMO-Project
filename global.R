@@ -1,6 +1,13 @@
+
+
+# -----------------------------------
+# 1- LOAD LIBRARIES
+
 # libraries
 library(shiny)
-library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
 library("shinyWidgets")
 library(RColorBrewer)		# awesome color palettes
 library(d3heatmap)			# for heatmaps
@@ -16,33 +23,29 @@ library(ggiraph)			# To animate the ggplot2 bubble chart
 
 
 
+
+
 # -----------------------------------
+# 1- LOAD DATA
+
 # data = HR of oleguer give in October
-data=read.table(file="DATA/pairwiseHR_october.txt" , header=T, sep=";")	
-# In data I remove the useless 'Risk of..' 
-data=data %>% mutate(outcome2=gsub("Risk of ","",outcome2)) 
+data=read.table(file="DATA/pairwiseHR.txt" , header=T, sep=";")	
+
+# In data I remove the useless 'Exposed to ' 
+data=data %>% mutate(exposure2=gsub("Exposed to ", "", exposure2)) 
+
 # I reorder the levels in data to respect the ICD10 classification order.
 mylevels = c("Organic disorders", "Substance abuse", "Schizophrenia and related", "Mood disorders",  "Neurotic disorders", "Eating disorders", "Personality disorders", "Mental retardation", "Developmental disorders", "Behavioral disorders")     
 data = data %>% mutate( outcome2 = factor(outcome2, levels=mylevels)) %>% mutate( exposure2 = factor(exposure2, levels=mylevels))
 
 
-# -----------------------------------
-# Equivalence between Oleguer codes and WHO classif
-equi=read.table(file="DATA/classif_oleguer.csv", sep="\t", header=F)
-colnames(equi)=c("OleguerCode","Group","WHO","Explanation","Importance")
 
-# The Main groups are:
-mymain=equi$OleguerCode[which(equi$Importance=="main")]
 
 
 
 # -----------------------------------
-# Complete list of ICD disease
-load("DATA/WHO_disease_classification_mental.R")
+# 2- COLOR ATTRIBUTION
 
-
-# -----------------------------------
-# Set the color attribution?
 my_palette = viridis(10)
 my_palette = rev(my_palette)
 color_attribution=c(
@@ -57,6 +60,29 @@ color_attribution=c(
 	"Developmental disorders" = my_palette[9], 
 	"Behavioral disorders" = my_palette[10]
 )
+
+
+
+# -----------------------------------
+# 3- SUMMARY INFO FOR EACH DISEASE
+
+# Make the data nicer to see
+don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
+colnames(don)=gsub("\\.", " ", colnames(don))
+
+
+
+
+
+# -----------------------------------
+# Equivalence between Oleguer codes and WHO classif
+#equi=read.table(file="DATA/classif_oleguer.csv", sep="\t", header=F)
+#colnames(equi)=c("OleguerCode","Group","WHO","Explanation","Importance")
+
+# The Main groups are:
+#mymain=equi$OleguerCode[which(equi$Importance=="main")]
+
+
 
 
 
