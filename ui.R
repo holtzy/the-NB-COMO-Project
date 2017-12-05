@@ -5,7 +5,7 @@
 	# ------------------------------------
 
 
-shinyUI(bootstrapPage(
+shinyUI(fluidPage(
         
 	
 	# This is to explain you have a CSS file that custom the appearance of the app
@@ -144,8 +144,8 @@ conditionalPanel("input.plot_type == 1",
 		column(2, br(), br(), 
 			h3(tags$u(tags$b("Figure 4")),": Distribution of Hazard Ratios. Each dot represents a pair of disease."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Normal Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Basic confounder"="1", "Kessler Prev"="2", "Kessler Prev with Interaction"="3") )
+				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
+				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
 			)
 
 		)
@@ -184,13 +184,18 @@ conditionalPanel("input.plot_type == 1",
 			),
 			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
 			h3(tags$u(tags$b("Figure 5")),": Sankey diagram showing the general flows between disease."),
+			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+			),
 			br(),
-			radioGroupButtons("sex_circularplot", label = NULL, choices=c("Women"="women", "Men"="men"), selected="women"),
+			radioGroupButtons("sex_sankey", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 			sliderInput("sankey_thres", "", min=1, max=30, value=1, ticks=F),
-			h5("Use this slider to display Hazard"), h5("Ratio over a certain value")
+			h3("Use this slider to display Hazard Ratio over a certain value")				
 		)
 	),
 	br(),br(),
+
+
 
 
 
@@ -221,7 +226,11 @@ conditionalPanel("input.plot_type == 1",
 			br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),br(), br(), 
 			h3(tags$u(tags$b("Figure 6")),": Heatmap displaying every hazard ratios (HR). Exposure diseases are located on the bottom, outcome diseases on the left."),
 			br(),
-			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women"), direction='horizontal', selected="women")
+			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all"), direction='horizontal', selected="all"),
+			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+					selectInput(inputId = "log_heatmap",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
+					selectInput(inputId = 'model_heatmap', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+			)
 		)
 	),
 
@@ -297,12 +306,65 @@ conditionalPanel("input.plot_type == 1",
 
 	fluidRow(align="center",
 		br(),
-		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Behaviour"="Behavioral disorders", "Developmental"="Developmental disorders", "Eating"="Eating disorders", "Retardation"="Mental retardation", "Mood"="Mood disorders" , "Neurotic"="Neurotic disorders" , "Organic"="Organic disorders" ,"Personality"="Personality disorders", "Schizophrenia"="Schizophrenia and related", "Substance"="Substance abuse" ), direction='horizontal', selected="Mood disorders"),
+		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
 		plotlyOutput("plot_time", height = "800px", width="70%"),
 		br(),
 		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios through time. 1-6m: from first to sixth month after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
 	br(),br(),br(),br(),
+
+
+
+
+
+
+
+
+
+	# -------------------------------------------------------------------------------------
+	# ===  ROW : CUMULATIVE INCIDENCE PROPORTION (CIP)
+	# -------------------------------------------------------------------------------------
+
+	fluidRow(align="center",
+		column(5, offset=1,  align="left", id="CIP",
+			h2("7. Cumulative Incidence Proportion"),
+			hr()
+	)),
+
+	fluidRow(align="center",
+		column(6, offset=3,  align="center",
+			br(), br(),
+			h5("The cumulative incidence proportion (CIP) calculates the proportion of people carrying a mental disorder following a given exposure. Here we propose to study this CIP in function of the time after exposure."),
+			br()
+		)
+	),
+
+	fluidRow(align="center",
+		br(),
+		h6("Choose exposure: "),
+		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
+		plotOutput("plot_CIP_a", height = "800px", width="70%", click = "plot1_click"),
+		column(6, offset=3, 
+			h3( tags$u(tags$b("Figure 10.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) through time (in years after exposure, X axis). Choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below."),
+			hr()
+		)
+	),
+	fluidRow(align="center",
+		conditionalPanel("input.more_or_less == 1",
+			plotOutput("plot_CIP_b", height = "300px", width="70%"),
+			br(),
+			column(6, offset=3, h3( tags$u(tags$b("Figure 10.b")),": Evolution of CIP through time for different age range at exposure. The exposure is chosen using the buttons above. The outcome is chosen clicking on the panel of figure 10.a"))
+		)
+	),
+	fluidRow(	 align="center",
+			radioGroupButtons( "more_or_less", label = NULL, choices=c( "More"=1, "Less"=2 ), direction='horizontal', selected=2)
+	),
+
+	br(),br(),br(),br(),
+
+
+
+
 
 
 
@@ -334,10 +396,10 @@ conditionalPanel("input.plot_type == 1",
 		),
 		column(3, align="left", 
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),
-			h3(tags$u(tags$b("Figure 10")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
+			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Normal Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Basic confounder"="1", "Kessler Prev"="2", "Kessler Prev with Interaction"="3") )
+				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
+				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
 			)
 		),
 		br()

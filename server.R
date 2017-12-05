@@ -43,7 +43,7 @@ shinyServer(function(input, output) {
 	output$plot_circlepack=renderggiraph({ 
 
 		# Generate the layout 
-		packing <- circleProgressiveLayout(don[,6], sizetype='area')
+		packing <- circleProgressiveLayout(don[,8], sizetype='area')
 		packing$radius=0.98*packing$radius
 		my_n_points=60
 		dat.gg <- circleLayoutVertices(packing, npoints=my_n_points)
@@ -51,10 +51,10 @@ shinyServer(function(input, output) {
 
 		# Add info
 		packing$disease=don[,2]
-		packing$N=don[,6]
+		packing$N=don[,8]
 
 		# Prepare text to display on hover
-		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of case:", packing$N, "\n\n",  "\n", "Shall we add a link?", '</span>')
+		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of cases:", packing$N, "\n\n",  "\n", "Shall we add a link?", '</span>')
 		dat.gg$text= rep( packing$text, each=my_n_points+1)
   
 		# Make the plot
@@ -111,7 +111,7 @@ shinyServer(function(input, output) {
 		# Prepare don for a hacked histogram
 		don = don %>% 
 			arrange(HR) %>% 
-			mutate(HR_rounded = HR - (HR %% 2)) %>% 
+			mutate(HR_rounded = (HR+1) - ( (HR+1) %%2 ) ) %>% 
 			mutate(y=ave(HR_rounded, HR_rounded, FUN=seq_along)) %>%
 		  	mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
 		 
@@ -150,11 +150,22 @@ shinyServer(function(input, output) {
 
 	output$plot_sankey=renderSankeyNetwork({ 
 
+		# Filter the data following the choice of the user
+		if( input$sex_sankey=="all" ){ 
+			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
+			choice=as.numeric(input$model_sankey)
+			don = data %>% filter(model==list[choice] & !is.na(HR) )
+		}else{
+			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
+			choice=as.numeric(input$model_sankey)
+			don = data %>% filter(model==list[choice] & sex==input$sex_sankey & !is.na(HR) )
+		}
+
 		# Prepare data?
-		don = data %>% 
+		don = don %>% 
 		  
 			# Select subset of the data
-			filter(model=="sex_basic_confounders" & sex==input$sex_circularplot & !is.na(HR)  & HR>input$sankey_thres) %>% 
+			filter( HR>input$sankey_thres ) %>% 
 		    
   			# make a difference between outcome and exposure (I add a space to outcome)
   			select(exposure2, outcome2, HR) %>% 
@@ -195,15 +206,24 @@ shinyServer(function(input, output) {
 
 	output$plot_heat2=renderPlotly({ 
 
-		# Recover what user choosed.
-		mysex=input$sex_heatmap
 
-		p=data %>%  
-		  filter(model=="sex_basic_confounders" & sex==mysex) %>%
+		# Filter the data following the choice of the user
+		if( input$sex_heatmap=="all" ){ 
+			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
+			choice=as.numeric(input$model_heatmap)
+			don = data %>% filter(model==list[choice] & !is.na(HR) )
+		}else{
+			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
+			choice=as.numeric(input$model_heatmap)
+			don = data %>% filter(model==list[choice] & sex==input$sex_heatmap & !is.na(HR) )
+		}
+
+
+		p=don %>%  
 		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disease: ", exposure2, "\n\n", "Outcome Disease: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), "\n"), '</span>') %>%
 		  ggplot(aes( x=exposure2, y=outcome2)) + 
 			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
-			scale_fill_gradient(low = "white", high = "steelblue") +
+			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
 			theme_grey(base_size = 9) + 
 			labs(x = "Exposure", y = "Outcome") + 
 			scale_x_discrete(expand = c(0, 0)) +
@@ -216,6 +236,8 @@ shinyServer(function(input, output) {
 			  axis.text.y = element_text(size = 10, angle = 0, hjust = 0, colour = "grey50"),
 			  plot.margin = unit(c(1.8,1.8,1.8,1.8), "cm")
 			)
+
+		if (input$log_heatmap=="log"){ p = p + scale_fill_gradient(low = "white", high = "steelblue", trans = "log", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60)) }
 		
 		ggplotly(p, tooltip="text")
 	
@@ -411,7 +433,8 @@ shinyServer(function(input, output) {
 		 	filter( exposure2 == mydisease ) %>%
 
 			# Prepare text
-			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", time, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "10-15y", time==6 ~  "15+y", time==6 ~  "15+y") ) %>%
+			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
 		  
 
 		  	# Make the plot
@@ -435,6 +458,85 @@ shinyServer(function(input, output) {
 		ggplotly(tooltip="text")	 
 	
 	})
+
+
+
+
+  # ------------------------------------------------------------------------------
+  # CIP PLOT .a AND .b
+  # ------------------------------------------------------------------------------
+
+	output$plot_CIP_a=renderPlot({ 
+
+		# Recover what user choosed.
+		mydisease=input$disease_CIP_plot
+
+		# Make the plot	
+		CIP %>% 
+  			
+  			# Keep the chosen data
+  			filter(sex=="all" & age_group=="all" & exposure2==mydisease) %>%
+		 	
+			# Prepare text
+			#mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+		  
+		  	# Make the plot
+			ggplot(aes(x=time_since_dx, y=cip, fill=outcome2)) +
+  				geom_area() +
+		    	scale_fill_manual( values = color_attribution) +
+  				facet_wrap( ~ outcome2) +
+  				xlab("time after exposure (in years)") +
+  				ylab("Cumulative incidence proportion (%)") +
+  				ylim(0,40) +
+		    	theme( 
+		      		legend.position = "none",
+		      		axis.text = element_text(size=10),
+		      		axis.title = element_text(size=14),
+		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
+		      		strip.text.x = element_text(colour = "black", size=17)
+		      	)
+	})
+
+
+	output$plot_CIP_b=renderPlot({ 
+
+		# Recover what user choosed.
+		mydisease=input$disease_CIP_plot
+
+		# Recover the outcome = where the user click:
+		myexposure = ifelse( is.null(input$plot1_click$panelvar1)  , "Organic disorders", input$plot1_click$panelvar1)
+
+		# Make the plot	
+		CIP %>% 
+  			
+  			# Keep the chosen data
+  			filter(sex=="all" & age_group!="all" & exposure2==mydisease & outcome2==myexposure) %>%
+		 	
+			# Prepare text
+			#mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+		  
+			ggplot(aes(x=time_since_dx, y=cip, fill=outcome2)) +
+  				geom_area() +
+  				facet_wrap( ~ age_group, nrow=1) +
+ 		    	scale_fill_manual( values = color_attribution) +
+  				xlab("time after exposure (in years)") +
+  				ylab("Cumulative incidence proportion (%)") +
+  				ylim(0,40) +
+		    	theme( 
+		      		legend.position = "none",
+		      		title = element_text( size=18),
+		      		axis.text = element_text(size=10),
+		      		axis.title = element_text(size=14),
+		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
+		      		strip.text.x = element_text(colour = "black", size=17)
+		      	) +
+		      	ggtitle(paste( "Proportion of people developping ", mydisease ," after beeing exposed to ", myexposure , sep=""))
+
+	})
+
+
+
+
 
 
 

@@ -75,16 +75,10 @@ colnames(don)=gsub("\\.", " ", colnames(don))
 
 
 # -----------------------------------
-# Equivalence between Oleguer codes and WHO classif
-#equi=read.table(file="DATA/classif_oleguer.csv", sep="\t", header=F)
-#colnames(equi)=c("OleguerCode","Group","WHO","Explanation","Importance")
+# 4- CIP DATA
 
-# The Main groups are:
-#mymain=equi$OleguerCode[which(equi$Importance=="main")]
-
-
-
-
+# CIP data are in a R object, the object is called 'CIP'
+load("~/Dropbox/QBI/2_DANISH_DATA_PROJECT/the-NB-COMO-Project/DATA/CIP_data.R")
 
 
 
