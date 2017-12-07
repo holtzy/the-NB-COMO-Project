@@ -78,7 +78,7 @@ colnames(don)=gsub("\\.", " ", colnames(don))
 # 4- CIP DATA
 
 # CIP data are in a R object, the object is called 'CIP'
-load("~/Dropbox/QBI/2_DANISH_DATA_PROJECT/the-NB-COMO-Project/DATA/CIP_data.R")
+load("DATA/CIP_data.R")
 
 
 

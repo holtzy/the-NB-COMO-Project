@@ -107,7 +107,10 @@ shinyServer(function(input, output) {
 			choice=as.numeric(input$model_dotplothisto)
 			don = data %>% filter(model==list[choice] & sex==input$sex_longbar & !is.na(HR) )
 		}
-		 
+		
+		# Decide a color
+		mycolor = ifelse(input$sex_longbar=="all" , "grey", ifelse(input$sex_longbar=="men", "#6699FF", "#CC99FF" )) 
+
 		# Prepare don for a hacked histogram
 		don = don %>% 
 			arrange(HR) %>% 
@@ -117,7 +120,7 @@ shinyServer(function(input, output) {
 		 
 		# Make the plot
 		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
-      		  geom_point( aes(color=y, text=text), size=5 ) +
+      		  geom_point( aes(text=text), size=5, color=mycolor ) +
 		      xlab('Hazard Ratio') +
 		      ylab('Number of pair of diseases') +
 		      ylim(1,18) +
@@ -220,7 +223,7 @@ shinyServer(function(input, output) {
 
 
 		p=don %>%  
-		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disease: ", exposure2, "\n\n", "Outcome Disease: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), "\n"), '</span>') %>%
+		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disease: ", exposure2, "\n\n", "Outcome Disease: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
 		  ggplot(aes( x=exposure2, y=outcome2)) + 
 			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
 			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
@@ -434,7 +437,7 @@ shinyServer(function(input, output) {
 
 			# Prepare text
 			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "10-15y", time==6 ~  "15+y", time==6 ~  "15+y") ) %>%
-			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
 		  
 
 		  	# Make the plot

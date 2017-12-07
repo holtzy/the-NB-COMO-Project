@@ -145,7 +145,7 @@ conditionalPanel("input.plot_type == 1",
 			h3(tags$u(tags$b("Figure 4")),": Distribution of Hazard Ratios. Each dot represents a pair of disease."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			)
 
 		)
@@ -185,7 +185,7 @@ conditionalPanel("input.plot_type == 1",
 			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
 			h3(tags$u(tags$b("Figure 5")),": Sankey diagram showing the general flows between disease."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			),
 			br(),
 			radioGroupButtons("sex_sankey", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
@@ -229,7 +229,7 @@ conditionalPanel("input.plot_type == 1",
 			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all"), direction='horizontal', selected="all"),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 					selectInput(inputId = "log_heatmap",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-					selectInput(inputId = 'model_heatmap', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+					selectInput(inputId = 'model_heatmap', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			)
 		)
 	),
@@ -260,7 +260,7 @@ conditionalPanel("input.plot_type == 1",
 		)
 	),
 
-	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Behaviour"="Behavioral disorders", "Developmental"="Developmental disorders", "Eating"="Eating disorders", "Retardation"="Mental retardation", "Mood"="Mood disorders" , "Neurotic"="Neurotic disorders" , "Organic"="Organic disorders" ,"Personality"="Personality disorders", "Schizophrenia"="Schizophrenia and related", "Substance"="Substance abuse" ), direction='horizontal', selected="Behavioral disorders")),
+	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders" ), direction='horizontal', selected="Mood disorders")),
 	fluidRow(align="center", radioGroupButtons("type_symetry_plot", label = NULL, choices=c( "Chart 1"=1, "Chart 2"=2), direction='horizontal', selected=1)),
 	br(), br(),
 	conditionalPanel("input.type_symetry_plot == 2",
@@ -399,7 +399,7 @@ conditionalPanel("input.plot_type == 1",
 			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2", "Model B + interaction"="3") )
+				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			)
 		),
 		br()
