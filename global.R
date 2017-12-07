@@ -20,6 +20,11 @@ library(viridis)
 library(grid)
 library(ggiraph)			# To animate the ggplot2 bubble chart
 
+library(shinycssloaders)	# Spinner if plot takes time to load
+
+
+
+
 
 
 
@@ -79,9 +84,6 @@ colnames(don)=gsub("\\.", " ", colnames(don))
 
 # CIP data are in a R object, the object is called 'CIP'
 load("DATA/CIP_data.R")
-
-
-
 
 
 

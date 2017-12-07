@@ -5,11 +5,15 @@
 	# ------------------------------------
 
 
+
+
 shinyUI(fluidPage(
-        
+
+
 	
 	# This is to explain you have a CSS file that custom the appearance of the app
 	includeCSS("www/style.css") ,
+
 
 
 
@@ -106,7 +110,7 @@ conditionalPanel("input.plot_type == 1",
 			column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover the bubble to get the exact numbers."))
 		),
 		conditionalPanel("input.table_or_bubble == 1", align="center",
-			dataTableOutput('ICD10table' , width="80%"),
+			dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
 			h3(tags$u(tags$b("Figure 2")),": The 10 mental diseases studied with their ICD10 and ICD8 codes.")
 		)
 
@@ -261,19 +265,10 @@ conditionalPanel("input.plot_type == 1",
 	),
 
 	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders" ), direction='horizontal', selected="Mood disorders")),
-	fluidRow(align="center", radioGroupButtons("type_symetry_plot", label = NULL, choices=c( "Chart 1"=1, "Chart 2"=2), direction='horizontal', selected=1)),
 	br(), br(),
-	conditionalPanel("input.type_symetry_plot == 2",
-		fluidRow(align="center",
-			column(6, offset=3, plotlyOutput("plot_bar", height = 700, width="90%")),
-			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between diseases. Each line represents à pair of disease. The 2 hazard ratios are represented in green and orange."))
-		)
-	),
-	conditionalPanel("input.type_symetry_plot == 1",
-		fluidRow(align="center",
-			column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
-			column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."))
-		)
+	fluidRow(align="center",
+		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
+		column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."))
 	),
 	br(),
 	fluidRow(align="center", radioGroupButtons("sex_symetry_plot", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all" ), direction='horizontal', selected="all")),
@@ -309,7 +304,7 @@ conditionalPanel("input.plot_type == 1",
 		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
 		plotlyOutput("plot_time", height = "800px", width="70%"),
 		br(),
-		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios through time. 1-6m: from first to sixth month after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
+		column(6, offset=3, h3( tags$u(tags$b("Figure 8")),": Evolution of hazard ratios through time. 1-6m: from first to sixth month after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
 	br(),br(),br(),br(),
 
@@ -343,21 +338,22 @@ conditionalPanel("input.plot_type == 1",
 		br(),
 		h6("Choose exposure: "),
 		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
-		plotOutput("plot_CIP_a", height = "800px", width="70%", click = "plot1_click"),
 		column(6, offset=3, 
-			h3( tags$u(tags$b("Figure 10.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) through time (in years after exposure, X axis). Choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below."),
-			hr()
+			h3( tags$u(tags$b("Figure 9.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) through time (in years after exposure, X axis). Choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below.")
 		)
 	),
+	fluidRow(align="center", 
+		plotOutput("plot_CIP_a", height = "800px", width="70%", click = "plot1_click")
+	),
+	fluidRow(column(6, offset=3,
+		hr(),
+		h5("The next chart allows you to explore a specific interaction by splitting in in several age ranges. Click on the upper chart to choose your outcome disease."),
+		hr()
+	)),
 	fluidRow(align="center",
-		conditionalPanel("input.more_or_less == 1",
-			plotOutput("plot_CIP_b", height = "300px", width="70%"),
-			br(),
-			column(6, offset=3, h3( tags$u(tags$b("Figure 10.b")),": Evolution of CIP through time for different age range at exposure. The exposure is chosen using the buttons above. The outcome is chosen clicking on the panel of figure 10.a"))
-		)
-	),
-	fluidRow(	 align="center",
-			radioGroupButtons( "more_or_less", label = NULL, choices=c( "More"=1, "Less"=2 ), direction='horizontal', selected=2)
+		plotOutput("plot_CIP_b", height = "300px", width="70%"),
+		br(),
+		column(6, offset=3, h3( tags$u(tags$b("Figure 9.b")),": Evolution of CIP through time for different age range at exposure. The exposure is chosen using the buttons above. The outcome is chosen clicking on the panel of figure 10.a"))
 	),
 
 	br(),br(),br(),br(),
@@ -396,7 +392,7 @@ conditionalPanel("input.plot_type == 1",
 		),
 		column(3, align="left", 
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),
-			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
+			h3(tags$u(tags$b("Figure 10")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and its confidence intervals (p=0.95) (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
 				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
@@ -533,8 +529,7 @@ conditionalPanel("input.plot_type == 3",
 			column(4, div(img(src="NBP logo.jpg" , height = 400, width = 440) , style="text-align: center;")),
 			column(4, style="text-align: left;",
 				div(img(src="QBI_logo.jpg" , height = 250, width = 600) , style="text-align: center;"),	
-				br(),
-				div(img(src="IMB_logo.png" , height = 150, width = 350) , style="text-align: center;")
+				br()
 			)
 			
 
@@ -573,8 +568,6 @@ conditionalPanel("input.plot_type == 3",
 
 	
 	# -------------------------------------------------------------------------------------
-
-
 
 
 

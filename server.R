@@ -12,7 +12,6 @@ shinyServer(function(input, output) {
 
 
 
-
   # ------------------------------------------------------------------------------
   # LINK ICD10 / ICD8
   # ------------------------------------------------------------------------------
@@ -258,75 +257,6 @@ shinyServer(function(input, output) {
 
 
   # ------------------------------------------------------------------------------
-  # Lollipop
-  # ------------------------------------------------------------------------------
-
-	output$plot_bar=renderPlotly({ 
-
-		# Recover what user choosed.
-		mysex=input$sex_symetry_plot
-		mydisease=input$disease_symetry_plot
-
-		# Filter the data following the choice of the user
-		if( mysex=="all" ){ 
-			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
-		}else{
-			don = data %>% filter(model=="sex_basic_confounders" & sex==mysex & !is.na(HR) )
-		}
-
-		# Create 2 datasets: every disease --> schizophrenia and return
-		a=don %>% 
-  			filter( exposure2==mydisease) %>%
-		  	select(outcome2, HR)
-		b=don %>% 
-  			filter( outcome2==mydisease) %>%
-  			select(exposure2, HR)
-		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
-		
-		# Max of the HRs:
-		mymax=max(c(tmp$HR.x, tmp$HR.y))
-
-		# plot
-		tmp %>%
-  			mutate(diff=abs(HR.x-HR.y)) %>%
-  			arrange(HR.x) %>%
-  			mutate(outcome2 = factor(outcome2, outcome2)) %>%
-
-			# Prepare text
-			mutate(text1=paste("From: ", mydisease, "\n\nTo: ", outcome2, "\n\nHazard Ratio: ", round(HR.x,2), sep="" )) %>%
-			mutate(text2=paste("From: ", outcome2, "\n\nTo: ", mydisease, "\n\nHazard Ratio: ", round(HR.y,2), sep="" )) %>%
-
-  			ggplot( aes(x=outcome2)) +
-  				geom_segment(aes(x=outcome2, y=HR.x, xend=outcome2, yend=HR.y), color="grey", size=1) +
-  				geom_point(aes(y=HR.x, text=text1), color="#2ecc71", size=5) +
-  				geom_point(aes(y=HR.y, text=text2), color="orange", size=5) +
-  				theme_bw() +
-
-		    	ggtitle(paste("Link between ", mydisease, " and: ", sep="")) +
-		    	ylab("Hazard Ratio") +
-		    	theme_classic() +
-		    	theme(
-		    		plot.title = element_text(hjust = 1),
-		      		axis.title.y=element_blank(),		      		
-		      		axis.text.y = element_text(colour="grey", size=13),
-		      		axis.line.y=element_blank(),
-		      		axis.ticks.y=element_blank()
-		    	) +
-
-		    coord_flip()
-
-		  ggplotly(tooltip="text")
-				  
-
-	
-	})
-
-
-
-
-
-
-  # ------------------------------------------------------------------------------
   # Symmetric Barplot
   # ------------------------------------------------------------------------------
 
@@ -375,6 +305,7 @@ shinyServer(function(input, output) {
 		mymax=max(c(tmp$CI_right.x, tmp$CI_right.y))
 
 		# p1
+		mytitle=paste( "from ... to ", mydisease, sep="")
 		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
@@ -384,9 +315,12 @@ shinyServer(function(input, output) {
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
 		  ylab("Hazard Ratio") +
-		  mytheme
+		  mytheme +
+		  ggtitle(bquote(italic(.(mytitle)))) +
+		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
 		# Create a scatterplot (plot2)
+		mytitle=paste( "from ", mydisease, " to ... ", sep="")
 		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  ylim(0, mymax) +
@@ -395,7 +329,9 @@ shinyServer(function(input, output) {
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
 		  ylab("Hazard Ratio") +
-		  mytheme
+		  mytheme +
+		  ggtitle(bquote(italic(.(mytitle)))) +
+		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
 		p3 = ggplot(tmp, aes(x=outcome2, y=-100, color=outcome2)) + 
 		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5) +
@@ -456,6 +392,7 @@ shinyServer(function(input, output) {
 		      		axis.text.x = element_text(angle = 45, hjust=0.8),
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
 		      		strip.text.x = element_text(colour = "black", size=13),
+		      		plot.margin = unit(c(1,1,1,1), "cm")
 		      	)
 
 		ggplotly(tooltip="text")	 
@@ -479,7 +416,8 @@ shinyServer(function(input, output) {
   			
   			# Keep the chosen data
   			filter(sex=="all" & age_group=="all" & exposure2==mydisease) %>%
-		 	
+
+
 			# Prepare text
 			#mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
 		  
@@ -496,7 +434,8 @@ shinyServer(function(input, output) {
 		      		axis.text = element_text(size=10),
 		      		axis.title = element_text(size=14),
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
-		      		strip.text.x = element_text(colour = "black", size=17)
+		      		strip.text.x = element_text(colour = "black", size=17),
+		      		panel.spacing = unit(2, "lines")
 		      	)
 	})
 
@@ -507,33 +446,36 @@ shinyServer(function(input, output) {
 		mydisease=input$disease_CIP_plot
 
 		# Recover the outcome = where the user click:
-		myexposure = ifelse( is.null(input$plot1_click$panelvar1)  , "Organic disorders", input$plot1_click$panelvar1)
+		myoutcome = ifelse( is.null(input$plot1_click$panelvar1)  , "Organic disorders", input$plot1_click$panelvar1)
 
-		# Make the plot	
-		CIP %>% 
+		# Prepare data subset	
+		tmp = CIP %>% 
   			
   			# Keep the chosen data
-  			filter(sex=="all" & age_group!="all" & exposure2==mydisease & outcome2==myexposure) %>%
+  			filter(sex=="all" & age_group!="all" & exposure2==mydisease & outcome2==myoutcome) %>%
 		 	
-			# Prepare text
-			#mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
+ 			# Create a more readabe column for age range
+  			mutate(clean_age_range = paste("age: ",age_group,sep="")) %>% mutate(clean_age_range = gsub("\\[", "from ", clean_age_range)) %>% mutate(clean_age_range = gsub(",", " to ", clean_age_range)) %>% mutate(clean_age_range = gsub(")", "", clean_age_range)) %>%
+			mutate(clean_age_range = factor(clean_age_range, levels=c( "age: from 0 to 20", "age: from 20 to 40", "age: from 40 to 60", "age: from 60 to 80", "age: 80+"))) 
 		  
-			ggplot(aes(x=time_since_dx, y=cip, fill=outcome2)) +
+		# plot
+		tmp %>% ggplot(aes(x=time_since_dx, y=cip, fill=outcome2)) +
   				geom_area() +
-  				facet_wrap( ~ age_group, nrow=1) +
+  				facet_wrap( ~ clean_age_range, nrow=1) +
  		    	scale_fill_manual( values = color_attribution) +
   				xlab("time after exposure (in years)") +
   				ylab("Cumulative incidence proportion (%)") +
-  				ylim(0,40) +
+  				ylim(0, 55 ) +
 		    	theme( 
 		      		legend.position = "none",
 		      		title = element_text( size=18),
 		      		axis.text = element_text(size=10),
 		      		axis.title = element_text(size=14),
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
-		      		strip.text.x = element_text(colour = "black", size=17)
+		      		strip.text.x = element_text(colour = "black", size=17),
+		      		plot.title = element_text(colour="grey", size=14, hjust=1)
 		      	) +
-		      	ggtitle(paste( "Proportion of people developping ", mydisease ," after beeing exposed to ", myexposure , sep=""))
+		      	ggtitle(paste( "Exposure: ", mydisease, " | Outcome: ", myoutcome, sep=""))
 
 	})
 
