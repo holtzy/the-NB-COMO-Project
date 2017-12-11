@@ -268,7 +268,13 @@ conditionalPanel("input.plot_type == 1",
 	br(), br(),
 	fluidRow(align="center",
 		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
-		column(2, offset=0, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."))
+		column(2, offset=0, 
+			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), 
+			h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between diseases. On the left, hazard ratio from every diseases to your selection are represented. On the right, the opposite direcion is represented."),
+			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+				selectInput(inputId = 'model_symmetry', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+			)
+		)
 	),
 	br(),
 	fluidRow(align="center", radioGroupButtons("sex_symetry_plot", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all" ), direction='horizontal', selected="all")),
@@ -306,6 +312,11 @@ conditionalPanel("input.plot_type == 1",
 		br(),
 		column(6, offset=3, h3( tags$u(tags$b("Figure 8")),": Evolution of hazard ratios through time. 1-6m: from first to sixth month after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
+	fluidRow(column(2, offset=5, align="center",	
+		dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
+				selectInput(inputId = 'model_evolution', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+		)
+	)),
 	br(),br(),br(),br(),
 
 
@@ -415,39 +426,47 @@ conditionalPanel("input.plot_type == 1",
 #	TAB 2 (METHODS)
 # #########
 conditionalPanel("input.plot_type == 2",
-	br(),
+	br(),br(),br(),
 
 	fluidRow(
-		column(8, offset=2, align="center",
-			h2("Material"),
+		column(8, offset=2, align="justify",
+			h2("STUDY POPULATION AND ASSESSMENT OF MENTAL ILLNESS"),
 			hr(),
-			"All the data computed in our study are available in the table hereafter.",
+			h5("We designed a population-based cohort study including all individuals living in Denmark during the study period (2000-2016) who had been born in Denmark between 1900 and 2015 (N = 5,940,778). Since 1968, the Danish Civil Registration System1,2 includes information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
 			br(),
-			"Moreover, the scripts allowing to build this website are available on Github."
+			h5("Information on mental diseases was obtained from the Danish Psychiatric Central Research Register, 3 which contains all admissions to psychiatric inpatient facilities since 1969 and, from 1995, also contacts to outpatient psychiatric departments and emergency visits."),
+			br(),
+			h5("The diagnostic system used was the Danish modification of the International Classification of Diseases, 8th Revision (ICD-8) from 1969 to 1993, and 10th Revision (ICD-10) from 1994 and onward. We classified different mental disorders into 10 main groups (Table 1), based on previous research using Danish registers and validated linkage between ICD-8 and ICD-10 codes.4 From this point onward, we use “main disorder” to describe a group of specific diagnosis. The date of onset for each main disorder was defined as the first day of the first contact (inpatient, outpatient, or emergency visit) for any of the diagnosis of interest"),
+			br()
 		)
 	),	
 
 	fluidRow(
-		br(),br(),
-		column(8, offset=2, align="center",
-			h2("Method"),
+		br(),br(),br(),
+		column(8, offset=2, align="justify",
+			h2("STUDY DESIGN"),
 			hr(),
-			"All the data computed in our study are available in the table hereafter.",
+			h5("For each of the ten main disorders, follow-up started on January 1, 2000 or at the earliest age at which a person might develop the disorder (Table 1), whichever came later. Follow-up was terminated at onset of the disorder, death, emigration from Denmark, or December 31, 2016, whichever came first. Our analyses were based on incident cases diagnosed according to the ICD-10 classification system during the observation period (2000-2016), when inpatient, outpatient and emergency visits information were included in the register."),
 			br(),
-			"Moreover, the scripts allowing to build this website are available on Github."
+			h5("Individuals with a diagnosis of the disorder before the observation period were considered prevalent cases and excluded from the analyses. This stringent washout rule meant that individuals included in the analyses could not have previously accessed services for the specific psychiatric condition for a 31-year period from 1969 to 1999. A sensitivity analysis in a previous study estimating incidence rates and lifetime risks for the same mental disorders revealed nearly identical results when extending the washout period to 36 years."),
+			br()
 		)
 	),
 	
 	fluidRow(
 		br(),br(),
-		column(10, offset=1, align="center",
-			h2("Raw data"),
+		column(8, offset=2, align="justify",
+			h2("STATISTICAL ANALYSIS"),
 			hr(),
-			"All the data computed in our study are available in the table hereafter.",
+			h5("We examined the association between all pairs of mental disorders taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (exposure-disorder) and temporally later disorder (outcome-disorder). All disorders were treated as time-varying. When investigating the association between a specific pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the exposure-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the exposure-disorder (if it happened during the follow-up), moment in which they became exposed."),
 			br(),
-			"Moreover, the scripts allowing to build this website are available on Github.",
+			h5("In those instances where there were ties, i.e. exposure- and outcome- disorders occurring on the same day, ties were broken by moving a proportion of the exposure-disorder diagnosis to one day earlier, otherwise the outcome-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the exposure-disorder occurred before the outcome-disorder among those with both exposure- and outcome-disorders occurring within 5 years."),
 			br(),
-			"Last but not least, our paper in online",
+			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the exposure-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for psychiatric comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Psychiatric comorbidity consisted on all other disorders except the specific exposure- and outcome-disorders and the total number of other disorders (2, 3 or 4+)."),
+			br(),
+			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with exposure-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with exposure-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period.5 However, we further investigated if the association differed depending on the time since onset of the exposure-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with an exposure-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with exposure-disorder who develop the outcome-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying or emigrating."),
+			br(),
+			h5("All analyses were performed in the secured platform of Statistic Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA). The data displayed in this application are available in the table below and a .csv version is available using the download button."),
 			br(),br(),
 			downloadButton("load_ex_format1", label = "Download"),
 			actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/the-NB-COMO-Project';"), 
@@ -481,58 +500,47 @@ conditionalPanel("input.plot_type == 3",
 
 	br(),br(),
 
-	fluidRow( align="center",
+	fluidRow( align="left",
 			column(6, offset=3, 
-				h2("why this application"),
+				h2("Core team"),
 				hr(),
-				br(),br(),
-				h5("This application has been developped to acompany our research paper. It aims to make our result more accessible"),
-				br(),
-				h5("and understandable by all."),
-				br(),
-				h5("Feel free to contact us at : xxx@gmail.com")
+				tags$ul(
+   					tags$li(h5(a("Oleguer Plana Ripoll",href="http://pure.au.dk/portal/en/persons/id(bdf4b27a-e767-49e7-9c8f-3314033a15b2).html"))), 
+   					tags$li(h5(a("Yan Holtz",href="https://holtzyan.wordpress.com"))), 
+   					tags$li(h5(a("John McGrath",href="http://researchers.uq.edu.au/researcher/6724")))
+				)
 			)
 		),
-
 	br(),br(),br(),br(),
+
+
+	fluidRow( align="left",
+			column(6, offset=3, 
+				h2("NCRR team"),
+				hr(),
+				tags$ul(
+   					tags$li(h5(a("Carsten Bøcker Pedersen",href="http://pure.au.dk/portal/en/persons/id(2d0e5aa0-9f34-4a6e-9adc-317eb444e801).html"))), 
+   					tags$li(h5(a("Esben Agerbo",href="http://pure.au.dk/portal/en/persons/id(5b08ed69-ad64-469f-a5b3-3407bf3c4b04).html"))), 
+   					tags$li(h5(a("Thomas Munk Laursen",href="http://pure.au.dk/portal/en/persons/id(366752b6-7172-46ab-9feb-f8f7eadce49f).html"))), 
+   					tags$li(h5(a("Preben Bo Mortensen",href="http://pure.au.dk/portal/en/persons/id(59099748-c5c8-4c1c-8bcb-023f8c51a090).html")))
+				)
+			)
+		),
+	br(),br(),br(),br(),
+
+
 	fluidRow(
 		column(6, offset=3, align="center",
-			h2("Who are we"),
-			hr()
-		),
-		column(8, offset=3, align="center",
-			fluidRow( style="text-align: center;",
-				column(3, img(src="John_pic.jpg" , height = 300, width = 300) ), 
-				column(3, img(src="Oleguer_pic.jpg" , height = 300, width = 250) ), 
-				column(3, img(src="Yan_pic.jpg" , height = 300, width = 300) )
-			),
-			fluidRow( style="text-align: center;",
-				column(3, h5("John McGrath is a psychiatrist interested in discovering the causes of serious mental disorders. He is the Director of the ",a("Queensland Centre for Mental Health Research", href="http://qcmhr.uq.edu.au"), "and conjoint Professor at the ",a("Queensland Brain Institute", href="https://qbi.uq.edu.au")) ),
-				column(3, h5("Oleguer Plana Ripoll is a Postdoc at the ",a("Department of Economics and Business Economics",href="http://econ.au.dk"), "- National Centre for Register-based Research. He is the first author of this study.") ),
-				column(3, h5("Yan Holtz is a data analyst working for the", a("Queensland Centre for Mental Health Research", href="http://qcmhr.uq.edu.au"), ". He created this webpage.") )
-			),
-			fluidRow( style="text-align: center;",
-				column(3, actionButton(inputId='ab1', label="Home page", icon = icon("home"), onclick ="location.href='http://researchers.uq.edu.au/researcher/6724';") ),
-				column(3, actionButton(inputId='ab1', label="Home page", icon = icon("github"), onclick ="location.href='http://pure.au.dk/portal/en/persons/id(bdf4b27a-e767-49e7-9c8f-3314033a15b2).html';") ),
-				column(3, actionButton(inputId='ab1', label="Home page", icon = icon("github"), onclick ="location.href='https://holtzyan.wordpress.com';") )
-			)
-		)
-	),
-
-	br(),br(),br(),br(),br(),br(),
-	fluidRow(
-		column(8, offset=2, align="center",
-			h2("Acknolwedgement"),
+			h2("Acknolwedgement", align="left"),
 			hr(),
 			br(),
-			column(4, br(),br(),br(),br(), div(img(src="aarhus_university_logo.png" , height = 150, width = 440) , style="text-align: right;")),
-			column(4, div(img(src="NBP logo.jpg" , height = 400, width = 440) , style="text-align: center;")),
-			column(4, style="text-align: left;",
-				div(img(src="QBI_logo.jpg" , height = 250, width = 600) , style="text-align: center;"),	
-				br()
-			)
-			
-
+			div(img(src="aarhus_university_logo.png")),
+			br(),br(),
+			div(img(src="UQlogo.png", width="40%", height="40%")),
+			br(),br(),
+			div(img(src="NBP logo.jpg", width="40%", height="40%")),
+			br(),br(),
+			div(img(src="DNRF.png", width="50%", height="50%"))
 		)
 	)
 
@@ -549,7 +557,7 @@ conditionalPanel("input.plot_type == 3",
 
 
 	# -------------------------------------------------------------------------------------
-	# === 9/ Add logo of organizations, link toward authors...
+	# === 9/ Footer
 	fluidRow( align="center" ,
 		br(), br(),
 		column(4, offset=4,

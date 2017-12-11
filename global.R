@@ -74,8 +74,7 @@ color_attribution=c(
 # Make the data nicer to see
 don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
 colnames(don)=gsub("\\.", " ", colnames(don))
-
-
+don$Subgroup=gsub("@", "\n", don$Subgroup)
 
 
 

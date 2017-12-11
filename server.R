@@ -16,14 +16,28 @@ shinyServer(function(input, output) {
   # LINK ICD10 / ICD8
   # ------------------------------------------------------------------------------
 		
-		# Show it in a table
-		observe({
 
-			# render the table
-			output$ICD10table <- DT::renderDataTable(
-					DT::datatable( don , rownames = FALSE , options = list(pageLength = 40, dom = 't' ))
-			)
-		})
+	# render the table
+	output$ICD10table <- DT::renderDataTable(
+			
+			displayableData<-DT::datatable( don , rownames = FALSE , 
+				options = list(
+					columnDefs = list(list(visible=FALSE, targets=8)),
+					#pageLength = 40, 
+					#dom = 't'#,
+      				rowCallback = JS(
+        				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
+        				"var full_text = aData[8]",
+        				"$('td:eq(0)', nRow).attr('title', full_text);",
+        				"}"
+      			)
+
+			)) #%>% 
+			#formatStyle( 'Prevalent cases before follow up', background = styleColorBar(don[,6], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
+			#formatStyle( 'Persons at risk at start of follow up', background = styleColorBar(don[,7], alpha('skyblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
+			#formatStyle( 'New cases during follow up', background = styleColorBar(don[,8], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) 
+	)
+
 
 
 
@@ -268,10 +282,14 @@ shinyServer(function(input, output) {
 
 
 		# Filter the data following the choice of the user
-		if( mysex=="all" ){ 
-			don = data %>% filter(model=="basic_confounders" & !is.na(HR) )
+		if( input$sex_symetry_plot=="all" ){ 
+			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
+			choice=as.numeric(input$model_symmetry)
+			don = data %>% filter(model==list[choice] & !is.na(HR) )
 		}else{
-			don = data %>% filter(model=="sex_basic_confounders" & sex==mysex & !is.na(HR) )
+			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
+			choice=as.numeric(input$model_symmetry)
+			don = data %>% filter(model==list[choice] & sex==input$sex_symetry_plot & !is.na(HR) )
 		}
 
 		# I put the levels in the other side to make them appear in the normal order on the plot
@@ -306,9 +324,9 @@ shinyServer(function(input, output) {
 
 		# p1
 		mytitle=paste( "from ... to ", mydisease, sep="")
-		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
+		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
-		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
+		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
 		  ylim(0, mymax) +
 		  scale_y_reverse() +
 		  coord_flip() +
@@ -321,10 +339,10 @@ shinyServer(function(input, output) {
 
 		# Create a scatterplot (plot2)
 		mytitle=paste( "from ", mydisease, " to ... ", sep="")
-		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
+		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  ylim(0, mymax) +
-		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
+		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
 		  coord_flip() +
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
@@ -363,12 +381,24 @@ shinyServer(function(input, output) {
 
 	output$plot_time=renderPlotly({ 
 
+
 		# Recover what user choosed.
 		mydisease=input$disease_time_plot
 
-		data %>% 
-		 	filter(substr(model, 1, 15)=="time_after_expo") %>%
-		 	mutate(time=as.numeric( gsub("time_after_expo_","", model))) %>%
+		# Recover the model:
+		if( input$model_evolution==1 ){ 
+			don = data %>% 
+		 		filter(substr(model, 1, 15)=="time_after_expo") %>%
+		 		mutate(time=as.numeric( gsub("time_after_expo_","", model)))	 
+		}else{
+			don = data %>% 
+		 		filter(substr(model, 1, 15)=="adjusted_time_a") %>%
+		 		mutate(time=as.numeric( gsub("adjusted_time_after_expo_","", model)))	 
+		}
+		 	
+		don %>%
+
+		 	# keep the good disease
 		 	filter( exposure2 == mydisease ) %>%
 
 			# Prepare text
@@ -569,7 +599,7 @@ shinyServer(function(input, output) {
 		output$load_ex_format1 <- downloadHandler(
     		filename = "HR_comoproject.csv",
 			content <- function(file) {
-    			file.copy("DATA/pairwiseHR_updated.txt", file)
+    			file.copy("DATA/pairwiseHR.txt", file)
   			}  
   	)	
 
