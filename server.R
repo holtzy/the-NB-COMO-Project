@@ -18,25 +18,25 @@ shinyServer(function(input, output) {
 		
 
 	# render the table
-	#output$ICD10table <- DT::renderDataTable(
+	output$ICD10table <- DT::renderDataTable(
 			
-	#		displayableData<-DT::datatable( don , rownames = FALSE , 
-	#			options = list(
-	#				columnDefs = list(list(visible=FALSE, targets=8)),
+			displayableData<-DT::datatable( don , rownames = FALSE , 
+				options = list(
+					columnDefs = list(list(visible=FALSE, targets=8)),
 					#pageLength = 40, 
-	#				dom = 't',
-     # 				rowCallback = JS(
-      #  				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-       # 				"var full_text = aData[8]",
-        #				"$('td:eq(0)', nRow).attr('title', full_text);",
-        #				"}"
-      	#		)
+					dom = 't',
+      				rowCallback = JS(
+        				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
+        				"var full_text = aData[8]",
+        				"$('td:eq(0)', nRow).attr('title', full_text);",
+        				"}"
+      			)
 
-		#	)) #%>% 
+			)) #%>% 
 			#formatStyle( 'Prevalent cases before follow up', background = styleColorBar(don[,6], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
 			#formatStyle( 'Persons at risk at start of follow up', background = styleColorBar(don[,7], alpha('skyblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
 			#formatStyle( 'New cases during follow up', background = styleColorBar(don[,8], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) 
-	#)
+	)
 
 
 
