@@ -18,25 +18,25 @@ shinyServer(function(input, output) {
 		
 
 	# render the table
-	output$ICD10table <- DT::renderDataTable(
+	#output$ICD10table <- DT::renderDataTable(
 			
-			displayableData<-DT::datatable( don , rownames = FALSE , 
-				options = list(
-					columnDefs = list(list(visible=FALSE, targets=8)),
+	#		displayableData<-DT::datatable( don , rownames = FALSE , 
+	#			options = list(
+	#				columnDefs = list(list(visible=FALSE, targets=8)),
 					#pageLength = 40, 
-					dom = 't',
-      				rowCallback = JS(
-        				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-        				"var full_text = aData[8]",
-        				"$('td:eq(0)', nRow).attr('title', full_text);",
-        				"}"
-      			)
+	#				dom = 't',
+     # 				rowCallback = JS(
+      #  				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
+       # 				"var full_text = aData[8]",
+        #				"$('td:eq(0)', nRow).attr('title', full_text);",
+        #				"}"
+      	#		)
 
-			)) #%>% 
+		#	)) #%>% 
 			#formatStyle( 'Prevalent cases before follow up', background = styleColorBar(don[,6], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
 			#formatStyle( 'Persons at risk at start of follow up', background = styleColorBar(don[,7], alpha('skyblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
 			#formatStyle( 'New cases during follow up', background = styleColorBar(don[,8], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) 
-	)
+	#)
 
 
 
@@ -67,7 +67,7 @@ shinyServer(function(input, output) {
 		packing$N=don[,8]
 
 		# Prepare text to display on hover
-		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of cases:", packing$N, "\n", '</span>')
+		packing$text=paste('<span style="font-size: 17px">', packing$disease, "</br>", "Number of cases:", packing$N, "\n", '</span>')
 		dat.gg$text= rep( packing$text, each=my_n_points+1)
   
 		# Make the plot
@@ -114,25 +114,25 @@ shinyServer(function(input, output) {
 		if( input$sex_longbar=="all" ){ 
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_dotplothisto)
-			don = data %>% filter(model==list[choice] & !is.na(HR) )
+			tmp_dotplot = data %>% filter(model==list[choice] & !is.na(HR) )
 		}else{
 			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
 			choice=as.numeric(input$model_dotplothisto)
-			don = data %>% filter(model==list[choice] & sex==input$sex_longbar & !is.na(HR) )
+			tmp_dotplot = data %>% filter(model==list[choice] & sex==input$sex_longbar & !is.na(HR) )
 		}
 		
 		# Decide a color
 		mycolor = ifelse(input$sex_longbar=="all" , "grey", ifelse(input$sex_longbar=="men", "#6699FF", "#CC99FF" )) 
 
-		# Prepare don for a hacked histogram
-		don = don %>% 
+		# Prepare tmp_dotplot for a hacked histogram
+		tmp_dotplot = tmp_dotplot %>% 
 			arrange(HR) %>% 
 			mutate(HR_rounded = (HR+1) - ( (HR+1) %%2 ) ) %>% 
 			mutate(y=ave(HR_rounded, HR_rounded, FUN=seq_along)) %>%
 		  	mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
 		 
 		# Make the plot
-		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
+		p=ggplot(tmp_dotplot, aes(x=HR_rounded, y=y) ) +
       		  geom_point( aes(text=text), size=5, color=mycolor ) +
 		      xlab('Hazard Ratio') +
 		      ylab('Number of pair of diseases') +
@@ -170,15 +170,15 @@ shinyServer(function(input, output) {
 		if( input$sex_sankey=="all" ){ 
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_sankey)
-			don = data %>% filter(model==list[choice] & !is.na(HR) )
+			tmp_sankey = data %>% filter(model==list[choice] & !is.na(HR) )
 		}else{
 			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
 			choice=as.numeric(input$model_sankey)
-			don = data %>% filter(model==list[choice] & sex==input$sex_sankey & !is.na(HR) )
+			tmp_sankey = data %>% filter(model==list[choice] & sex==input$sex_sankey & !is.na(HR) )
 		}
 
 		# Prepare data?
-		don = don %>% 
+		tmp_sankey = tmp_sankey %>% 
 		  
 			# Select subset of the data
 			filter( HR>input$sankey_thres ) %>% 
@@ -193,17 +193,17 @@ shinyServer(function(input, output) {
   			mutate(outcome2=paste(outcome2, " ", sep=""))
 
  		# Make a data frame with nodes
- 		nodes=data.frame( ID = c(as.character(unique(don$exposure2)), as.character(unique(don$outcome2)) ) )
+ 		nodes=data.frame( ID = c(as.character(unique(tmp_sankey$exposure2)), as.character(unique(tmp_sankey$outcome2)) ) )
  
  		# Make a data frame with the links
- 		don$outcome=match(don$outcome2, nodes$ID)-1
-		don$exposure=match(don$exposure2, nodes$ID)-1
+ 		tmp_sankey$outcome=match(tmp_sankey$outcome2, nodes$ID)-1
+		tmp_sankey$exposure=match(tmp_sankey$exposure2, nodes$ID)-1
 
 		# Prepare a color scale:
 		ColourScal ='d3.scaleOrdinal() .domain(["Organic disorders" , "Substance abuse" , "Schizophrenia and related","Mood disorders" ,"Neurotic disorders", "Eating disorders" ,"Personality disorders", "Mental retardation", "Developmental disorders", "Behavioral disorders"]) .range(["#FDE725FF","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
 
   		# Make the plot
- 		sankeyNetwork(Links = don, Nodes = nodes,
+ 		sankeyNetwork(Links = tmp_sankey, Nodes = nodes,
              Source = "exposure", Target = "outcome",
              Value = "HR", NodeID = "ID", nodeWidth=40, fontSize=13,
              nodePadding=20, colourScale=ColourScal, width=2000, height=2000 ) #, LinkGroup="group") 
@@ -285,21 +285,21 @@ shinyServer(function(input, output) {
 		if( input$sex_symetry_plot=="all" ){ 
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_symmetry)
-			don = data %>% filter(model==list[choice] & !is.na(HR) )
+			temp = data %>% filter(model==list[choice] & !is.na(HR) )
 		}else{
 			list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
 			choice=as.numeric(input$model_symmetry)
-			don = data %>% filter(model==list[choice] & sex==input$sex_symetry_plot & !is.na(HR) )
+			temp = data %>% filter(model==list[choice] & sex==input$sex_symetry_plot & !is.na(HR) )
 		}
 
 		# I put the levels in the other side to make them appear in the normal order on the plot
-		don = don %>%  mutate( exposure2 = factor(exposure2, levels=rev(mylevels))) %>%  mutate( outcome2 = factor( outcome2, levels=rev(mylevels)))
+		temp = temp %>%  mutate( exposure2 = factor(exposure2, levels=rev(mylevels))) %>%  mutate( outcome2 = factor( outcome2, levels=rev(mylevels)))
 
 		# Create 2 datasets: every disease --> schizophrenia and return
-		a=don %>% 
+		a=temp %>% 
 		  filter( exposure2==mydisease ) %>%
 		  select( outcome2, HR, CI_left, CI_right)
-		b=don %>% 
+		b=temp %>% 
 		  filter( outcome2==mydisease ) %>%
 		  select( exposure2, HR, CI_left, CI_right)
 		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
@@ -365,7 +365,7 @@ shinyServer(function(input, output) {
 		  ) 
 
 		# Arrange and display the plots into a 2x1 grid
-		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
+		title=textGrob(mydisease, gp=gpar(fontsize=20,font=2))
 		grid.arrange( p1, p3, p2, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
 	
 	})
@@ -579,7 +579,7 @@ shinyServer(function(input, output) {
 		observe({
 
 			# Make the data nicer to see
-			don=data %>% mutate(
+			tmp_raw=data %>% mutate(
 				exposure=gsub("expo_","",exposure),
 				personyears0=round(personyears0,1),	
 				personyears1=round(personyears1,1),	
@@ -587,11 +587,11 @@ shinyServer(function(input, output) {
 				CI_left=round(CI_left,2),
 				CI_right=round(CI_right,2)
 				)
-			colnames(don)[1:4]=c("outcome_id", "outcome", "exposure_id", "exposure")
+			colnames(tmp_raw)[1:4]=c("outcome_id", "outcome", "exposure_id", "exposure")
 
 			# render the table
 			output$raw_data <- DT::renderDataTable(
-					DT::datatable( don , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft' )  )
+					DT::datatable( tmp_raw , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft' )  )
 			)
 		})
 

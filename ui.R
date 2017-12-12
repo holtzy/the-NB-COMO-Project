@@ -113,7 +113,7 @@ conditionalPanel("input.plot_type == 1",
 			column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
 		),
 		conditionalPanel("input.table_or_bubble == 1", align="center",
-			dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
+			#dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
 			h3(tags$u(tags$b("Figure 2")),": The 10 mental diseases studied with their ICD10 and ICD8 codes.")
 		)
 

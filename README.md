@@ -5,7 +5,7 @@ The NB-COMO Project
 
 Overview
 --------
-The NB-BOMO project aims to explore the patterns of comorbidity within treated mental disorders. It explores different ways to capture the complex patterns of comorbidity, notably through data visualization techniques. The first part of this project explores COMO within the [Danish National Patient Registry](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/) (DNPR), one of the world’s oldest nationwide hospital registries.
+The NB-COMO project aims to explore the patterns of comorbidity within treated mental disorders. It explores different ways to capture the complex patterns of comorbidity, notably through data visualization techniques. The first part of this project explores COMO within the [Danish National Patient Registry](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/) (DNPR), one of the world’s oldest nationwide hospital registries.
 
 This repository gives the code of a web application that allows to interactively explore our results. It goes along with our peer reviewed publication (work in progress).
 
