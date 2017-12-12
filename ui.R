@@ -19,7 +19,7 @@ shinyUI(fluidPage(
 
 
 	# -------------------------------------------------------------------------------------
-	# === ROW 1 : title + Main tabs
+	# === ROW : title + Main tabs
 	fluidRow(
 		style="opacity:0.9; background-color: white ;margin-top: 10px; width: 100%;",
 
@@ -47,7 +47,7 @@ shinyUI(fluidPage(
 
 
 	# -------------------------------------------------------------------------------------
-	# === ROW 2 : Grey Parts with the introduction
+	# === ROW : Grey Parts with the introduction
 	fluidRow(align="center", style="opacity:0.9 ;margin-top: 0px; width: 100%;",
 
 		hr(),
@@ -56,10 +56,10 @@ shinyUI(fluidPage(
 		column(6, offset=3, align="center",
 				div(img(src="NBP logo.jpg" , height = 250, width = 250) , style="text-align: center;"),
 				column(6, offset=0, align="justify",
-					h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring the patterns of comorbidity within treated mental disorders. Over the next few years we will explore different ways to capture the complex patterns of comorbidity between mental disorders. In particular, we wish to develop")
+					h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring patterns of comorbidity (COMO) within treated mental disorders. Over the next few years we will explore different ways describing the complex patterns of comorbidity between mental disorders. In particular, we wish to develop")
 				), 
 				column(6, offset=0, align="justify",
-					h5("interactive data visualizations that allow the research community greater flexibilitly in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish National Patient Registry", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/"), "(DNPR), one of the world’s oldest nationwide hospital registries")
+					h5("interactive data visualizations that will allow the research community greater flexibilitly in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish National Patient Registry", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/"), "(DNPR), one of the world’s oldest nationwide hospital registries")
 				),
 				hr()
 		),
@@ -81,10 +81,10 @@ conditionalPanel("input.plot_type == 1",
 
 
 	# -------------------------------------------------------------------------------------
-	# ===  ROW 1 : Circle Packing explaining ICD10 OR table with link ICD10 - ICD8
+	# ===  ROW : Time lapse + Circle Packing explaining ICD10 OR table with link ICD10 - ICD8
 	fluidRow(align="center",
 		
-		br(), br(),br(),br(),br(),br(), br(),br(),br(),
+		br(),br(),br(),br(),br(),br(), br(),br(),br(),
 
 		# title
 		fluidRow(column(5, offset=1,  align="left", id="definition",
@@ -93,21 +93,24 @@ conditionalPanel("input.plot_type == 1",
 		)),
 
 		# image
-		br(),br(), br(),
-		h5("The Danish register is a study that took place between 1969 and 2016. Here is a brief desctiption of its timeline: "),
-		br(),
+		br(),br(),
+		column(8, offset=2, align="justify", 
+			h5("Danish health registers provide approved researcher access to anonymized person-level information on access to mental  health care via inpatient, outpatient and emergency settings. Our study is built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. From 2000-2016 we have a period of observation where we are more confident we can identify incident (new) cases."),
+			br(),
+			h5("As can be seen in the figure below, ICD8 was used from 1969 to 1994, and ICD-1o has been used since 1995. The mental health register was based on inpatient events between 1969 and 1994, after which outpatient and emergency visits were included."),
+			br()	
+		),
 		div(img(src="TimeLine.png" , height = 250, width = 800) , style="text-align: center;"),
-		br(),
 		h3(tags$u(tags$b("Figure 1")),": Timeline of the Danish Register"),
 		br(), br(),
 
 		# table or bubble
 		br(),br(),br(),
-		h5("During this period of time we studied mental disorders that are split in 10 main categories:"),
+		fluidRow(column(8, offset=2, h5("In ICD10 the mental health related disorders are included in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), "." ))),
 		radioGroupButtons( "table_or_bubble",label = NULL, choices=c("Table"=1, "Chart"=2), selected=1 ),
 		conditionalPanel("input.table_or_bubble == 2", align="center",
 			column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px")),
-			column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover the bubble to get the exact numbers."))
+			column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
 		),
 		conditionalPanel("input.table_or_bubble == 1", align="center",
 			dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
@@ -129,14 +132,16 @@ conditionalPanel("input.plot_type == 1",
 
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="globalsection",
-			h2("2. Sick people are more likely to develop other mental illness"),
+			h2("2. Pairwise, temporally-ordered hazard ratios"),
 			hr()
 	)),
 
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("We calculated the hazard ratio between each pair of diseases. The vast majority of them is over 1, meaning that people with a mental disease are more likely to develop another one."),
+			h5("We calculated the hazard ratio between each pair of diseases. The vast majority of these estimates are over 1, meaning that individuals with a prior mental disorder (which we call an exposure), are more likely to subsequently develop  an additional mental disorder (which we call an outcome)."), 
+			br(),
+			h5("The plot below shows the distribution of hazard ratios for all COMO pairs. Note that all hazard ratios are greater than 1."),
 			br()
 		)
 	),
@@ -166,7 +171,7 @@ conditionalPanel("input.plot_type == 1",
 	# ===  ROW 3 : SANKEY DIAGRAM
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="globalsection",
-			h2("3. An overview of all relationships"),
+			h2("3. COMO is pervasive"),
 			hr()
 	)),
 
@@ -175,7 +180,7 @@ conditionalPanel("input.plot_type == 1",
 			br(), br(),
 			h5("This Sankey diagram shows every possible relationship between pairs of mental illness. Exposure diseases are represented on the left, while outcomes are on the right."),
 			br(), 
-			h5("You can study interaction in the other side by highlighting the outcome disease (on the right).  You can explore patterns for men or women, and use the slider bar to explore all Hazard Ratios, or only those above a certain effect size."),
+			h5("You can study the association between each disorder group and all other disorder groups. To see the hazard ratio and 95%CI hover over the connecting threads. While the disorder groups are colour coded, the Sankey diagram will automatically rearrange the order of exposure and outcome disorders in order to minimize cross-overs. If you slide the Hazard Ratio bar, you can see which COMO pairs have the largest effect size. Remember that relative risk is different to absolute risk."),
 			br()
 		)
 	),
@@ -209,14 +214,14 @@ conditionalPanel("input.plot_type == 1",
 	# ===  HEATMAP
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="globalsection",
-			h2("4. Similarities between pairs of disorders"),
+			h2("4. Patterns of effect size between disorder pairs"),
 			hr()
 	)),
 
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("This heat map shows the pairwise hazard ratios. Hot colours denotes high hazard ratios, and cold colors low hazard ratios. Hover the cells to get the exact value of each pair of disease."),
+			h5("This heat map shows the pairwise hazard ratios. Darker shades of blue indicate larger hazard ratios (see colour legend on the right). Hover the cells to get the exact value of each pair of disease."),
 			br()
 		)
 	),
@@ -259,7 +264,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("In these graphs we wish to explore the bidirectional association between disease pairs. The results suggests that most temporally ordered disease pairs have significant hazard ratios, but some disease pairs appear more symmetrical – we call these ‘mirror phenotypes’ – it seems as if the disease pairs co-occur with approximately risk regardless of which disorder comes first."),
+			h5("In these graphs we wish to explore the bidirectional association between disease pairs. The results suggests that most temporally ordered disease pairs have a bidirectional relationship - there is an increased risk of the other disorder regardless of temporal order. However, some disease pairs appear more symmetrical – we call these ‘mirror phenotypes’ – it seems as if the disease pairs co-occur with approximately risk regardless of which disorder comes first."),
 			br()
 		)
 	),
@@ -291,7 +296,7 @@ conditionalPanel("input.plot_type == 1",
 	# -------------------------------------------------------------------------------------
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="globalsection",
-			h2("6. Temporal components of COMO"),
+			h2("6. Lagged hazard ratios between COMO pairs"),
 			hr()
 	)),
 
@@ -300,7 +305,7 @@ conditionalPanel("input.plot_type == 1",
 			br(), br(),
 			h5("Here we wish to explore the lag between disease pairs. For all disease pairs, the greatest hazard ratios occur within the first year after diagnosis, and then fall to a stable risk."),
 			br(),
-			h5("The high risks within the first few months probably reflect diagnostic practices during observation and history taking, a normal process of clinical practice."),
+			h5("The high risks within the first few months probably reflects a range of factors, including presentations with more than one disorder, and also diagnostic practices during observation and history taking, a normal process of clinical practice."),
 			br()
 		)
 	),
@@ -333,14 +338,14 @@ conditionalPanel("input.plot_type == 1",
 
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="CIP",
-			h2("7. Cumulative Incidence Proportion"),
+			h2("7. Absolute risk"),
 			hr()
 	)),
 
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("The cumulative incidence proportion (CIP) calculates the proportion of people carrying a mental disorder following a given exposure. Here we propose to study this CIP in function of the time after exposure."),
+			h5("The cumulative incidence proportion (CIP) shows the proportion of people who develop an outcome disorder after exposure to a prior mental disorder. A cumulative incidence proportion of 20 per 100 personss at 10 years suggests that approximately one in 5 people who present with an index (exposure) mental disorder will subsequently develop a second (incident) disorder after 10 years of exposure."),
 			br()
 		)
 	),

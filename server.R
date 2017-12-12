@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
 				options = list(
 					columnDefs = list(list(visible=FALSE, targets=8)),
 					#pageLength = 40, 
-					#dom = 't'#,
+					dom = 't',
       				rowCallback = JS(
         				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
         				"var full_text = aData[8]",
@@ -67,7 +67,7 @@ shinyServer(function(input, output) {
 		packing$N=don[,8]
 
 		# Prepare text to display on hover
-		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of cases:", packing$N, "\n\n",  "\n", "Shall we add a link?", '</span>')
+		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of cases:", packing$N, "\n", '</span>')
 		dat.gg$text= rep( packing$text, each=my_n_points+1)
   
 		# Make the plot
