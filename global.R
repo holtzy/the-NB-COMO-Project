@@ -19,13 +19,11 @@ library(gridExtra)
 library(viridis)
 library(grid)
 library(ggiraph)			# To animate the ggplot2 bubble chart
+
 library(shinycssloaders)	# Spinner if plot takes time to load
 
 
 
-# Install
-#mylist=c( "shiny", "dplyr", "ggplot2", "tidyr", "shinyWidgets", "RColorBrewer", "d3heatmap", "plotly", "DT", "networkD3", "packcircles", "gridExtra", "viridis", "grid", "ggiraph", "shinycssloaders")
-#install.packages(mylist)
 
 
 

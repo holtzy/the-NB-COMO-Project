@@ -106,7 +106,7 @@ conditionalPanel("input.plot_type == 1",
 
 		# table or bubble
 		br(),br(),br(),
-		fluidRow(column(8, offset=2, h5("In ICD10 the mental health related disorders are included in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), "." ))),
+		fluidRow(column(8, offset=2, h5("In ICD10 the mental health related disorders are included in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), ". Each diagnosis includes several specific diagnosis. If you hover a row under the column diagnosis, you will see every subgroups included." ))),
 		radioGroupButtons( "table_or_bubble",label = NULL, choices=c("Table"=1, "Chart"=2), selected=1 ),
 		conditionalPanel("input.table_or_bubble == 2", align="center",
 			column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px")),
@@ -192,10 +192,15 @@ conditionalPanel("input.plot_type == 1",
 				column(6, h6(align="right", "outcome"))
 			),
 			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
-			h3(tags$u(tags$b("Figure 5")),": Sankey diagram showing the general flows between disease."),
+			h3(tags$u(tags$b("Figure 5")),": Sankey diagram showing the general flows between disease.")
+	)),
+
+	fluidRow(
+		column(2, offset=5,	align="center",		
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			),
+			
 			br(),
 			radioGroupButtons("sex_sankey", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 			sliderInput("sankey_thres", "", min=1, max=30, value=1, ticks=F),
@@ -363,14 +368,15 @@ conditionalPanel("input.plot_type == 1",
 	),
 	fluidRow(column(6, offset=3,
 		hr(),
-		h5("The next chart allows you to explore a specific interaction by splitting in in several age ranges. Click on the upper chart to choose your outcome disease."),
+		h5("The next chart allows you to explore a specific interaction by splitting it in several age ranges. Click on the upper chart to choose your outcome disease."),
 		hr()
 	)),
 	fluidRow(align="center",
 		plotOutput("plot_CIP_b", height = "300px", width="70%"),
 		br(),
-		column(6, offset=3, h3( tags$u(tags$b("Figure 9.b")),": Evolution of CIP through time for different age range at exposure. The exposure is chosen using the buttons above. The outcome is chosen clicking on the panel of figure 10.a"))
+		column(6, offset=3, h3( tags$u(tags$b("Figure 9.b")),": Evolution of CIP through time for different age range at exposure. The exposure is chosen using the buttons above. The outcome is chosen clicking on the panel of figure 10.a. Confidence interval are represented by the grey area."))
 	),
+	fluidRow(align="center", radioGroupButtons("sex_absolute_plot", label = NULL, choices=c("Men"="M", "Women"="K", "All"="all" ), direction='horizontal', selected="all")),
 
 	br(),br(),br(),br(),
 
@@ -388,7 +394,7 @@ conditionalPanel("input.plot_type == 1",
 	# ===  ROW 6 : About Male and Female
 	fluidRow(align="center",
 		column(5, offset=1,  align="left", id="globalsection",
-			h2("7. Differences between Male and Female"),
+			h2("8. Differences between Male and Female"),
 			hr()
 	)),
 
