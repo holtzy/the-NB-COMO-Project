@@ -135,7 +135,7 @@ shinyServer(function(input, output) {
 		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
       		  geom_point( aes(text=text), size=5, color=mycolor ) +
 		      xlab('Hazard Ratio') +
-		      ylab('Number of pair of diseases') +
+		      ylab('Number of pair of mental disorder') +
 		      ylim(1,18) +
 		      xlim(0,70) +
 		      geom_vline(aes(xintercept = 1), color="grey", linetype="dashed") +
@@ -237,7 +237,7 @@ shinyServer(function(input, output) {
 
 
 		p=don %>%  
-		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disease: ", exposure2, "\n\n", "Outcome Disease: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
+		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disorder: ", exposure2, "\n\n", "Outcome Disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
 		  ggplot(aes( x=exposure2, y=outcome2)) + 
 			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
 			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
@@ -560,7 +560,7 @@ shinyServer(function(input, output) {
 		    ) +
 		    labs(x="Hazard Ratios for men", y="Hazard Ratios for women") +
 		    coord_equal() +
-		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higer HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
+		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higher HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
 
 		
 		# Eventually log scale?
@@ -595,7 +595,7 @@ shinyServer(function(input, output) {
 
 			# render the table
 			output$raw_data <- DT::renderDataTable(
-					DT::datatable( don , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft' )  )
+					DT::datatable( head(don) , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft', scrollX = TRUE )  )
 			)
 		})
 
@@ -603,7 +603,7 @@ shinyServer(function(input, output) {
 		output$load_ex_format1 <- downloadHandler(
     		filename = "HR_comoproject.csv",
 			content <- function(file) {
-    			file.copy("DATA/pairwiseHR.txt", file)
+    			file.copy("DATA/temp.txt", file)
   			}  
   	)	
 
