@@ -479,7 +479,7 @@ shinyServer(function(input, output) {
 		mydisease=input$disease_CIP_plot
 
 		# Recover the outcome = where the user click:
-		myoutcome = ifelse( is.null(input$plot1_click$panelvar1)  , mylevels[-match(mydisease, mylevels)][1], input$plot1_click$panelvar1)
+		myoutcome = ifelse( is.null(input$plot1_click$panelvar1)  , mylevels[-match(mydisease, mylevels)][4], input$plot1_click$panelvar1)
 
 		# Prepare data subset	
 		tmp = CIP %>% 
@@ -507,7 +507,7 @@ shinyServer(function(input, output) {
 		      		axis.title = element_text(size=14),
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
 		      		strip.text.x = element_text(colour = "black", size=17),
-		      		plot.title = element_text(colour="grey", size=14, hjust=1)
+		      		plot.title = element_text(colour="#2ecc71", size=17, hjust=0.5)
 		      	) +
 		      	ggtitle(paste( "Exposure: ", mydisease, " | Outcome: ", myoutcome, sep=""))
 
@@ -558,8 +558,8 @@ shinyServer(function(input, output) {
 		    theme(
 		    	legend.position="none"
 		    ) +
-		    labs(x="Hazard Ratios for men", y="Hazard Ratios for women") +
-		    coord_equal() +
+		    labs(x="Hazard Ratios for men", y="Hazard Ratios for women") #+
+		    #coord_equal() +
 		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higher HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
 
 		

@@ -47,7 +47,7 @@ shinyUI(fluidPage(
 
 
 # #########
-#	TAB 1
+#	TAB  RESULT
 # #########
 conditionalPanel("input.plot_type == 1",
 
@@ -514,7 +514,7 @@ conditionalPanel("input.plot_type == 3",
 				hr(),
 				tags$ul(
    					tags$li(h5(a("Oleguer Plana Ripoll",href="http://pure.au.dk/portal/en/persons/id(bdf4b27a-e767-49e7-9c8f-3314033a15b2).html"))), 
-   					tags$li(h5(a("Yan Holtz",href="https://holtzyan.wordpress.com"))), 
+   					tags$li(h5(a("Yan Holtz",href="https://www.linkedin.com/in/yan-holtz-2477534a"))), 
    					tags$li(h5(a("John McGrath",href="http://researchers.uq.edu.au/researcher/6724")))
 				)
 			)
@@ -571,7 +571,7 @@ conditionalPanel("input.plot_type == 3",
 		column(4, offset=4,
 			hr(),
 			br(), br(),
-			"Created by", strong(a("Yan Holtz", style="color:lightblue", href="https://holtzyan.wordpress.com")), ".",
+			"Created by", strong(a("Yan Holtz", style="color:lightblue", href="https://www.linkedin.com/in/yan-holtz-2477534a")), ".",
 			br(),
 			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/the-NB-COMO-Project")), ".",
 			br(),
