@@ -79,7 +79,7 @@ conditionalPanel("input.plot_type == 1",
 		radioGroupButtons("sex_longbar", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 		column(6, offset=3, plotlyOutput("plot_longbar", height = "500px", width="900") ),
 		column(2, br(), br(), 
-			h3(tags$u(tags$b("Figure 4")),": Distribution of Hazard Ratios. Each dot represents a pair of disorder."),
+			h3(tags$u(tags$b("Figure 5")),": Distribution of Hazard Ratios. Each dot represents a pair of disorder."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
 				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
@@ -108,7 +108,7 @@ conditionalPanel("input.plot_type == 1",
 			br(), br(),
 			h5("This Sankey diagram shows all possible permutations of relationship between pairs of mental Disorder Groups. Exposure disorders are represented on the left, while outcome disorders are on the right."),
 			br(), 
-			h5("You can study the association between each exposure disorder group and outcome disorder group. To see the hazard ratios hover your mouse over the connecting threads. The Disorder Groups are colour coded. The Sankey diagram will automatically rearrange the order of exposure and outcome disorders to minimize cross-overs. Move the slider below figure 5 to examine COMO pairs with varying effect sizes. Note that relative risk is different to absolute risk."),
+			h5("You can study the association between each exposure disorder group and outcome disorder group. To see the hazard ratios hover your mouse over the connecting threads. The Disorder Groups are colour coded. The Sankey diagram will automatically rearrange the order of exposure and outcome disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with varying effect sizes. Note that relative risk is different to absolute risk."),
 			br()
 		)
 	),
@@ -120,7 +120,7 @@ conditionalPanel("input.plot_type == 1",
 				column(6, h6(align="right", "outcome disorders"))
 			),
 			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
-			h3(tags$u(tags$b("Figure 5")),": Sankey diagram showing the general flows between Disorder Groups.")
+			h3(tags$u(tags$b("Figure 6")),": Sankey diagram showing the general flows between Disorder Groups.")
 	)),
 
 	fluidRow(
@@ -166,7 +166,7 @@ conditionalPanel("input.plot_type == 1",
 		),
 		column(2, 
 			br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),br(), br(), 
-			h3(tags$u(tags$b("Figure 6")),": Heatmap displaying hazard ratios (HR) between disorder pairs. Exposure disorders are located at the bottom, outcome disorders on the left."),
+			h3(tags$u(tags$b("Figure 7")),": Heatmap displaying hazard ratios (HR) between disorder pairs. Exposure disorders are located at the bottom, outcome disorders on the left."),
 			br(),
 			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all"), direction='horizontal', selected="all"),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
@@ -208,7 +208,7 @@ conditionalPanel("input.plot_type == 1",
 		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
 		column(2, offset=0, 
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), 
-			h3(tags$u(tags$b("Figure 7")),": Description of the symmetry between Disorder Groups. Hazard ratio between all possible disorders and your selected disorder are represented on the left panel and vice-versa."),
+			h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between Disorder Groups. Hazard ratio between all possible disorders and your selected disorder are represented on the left panel and vice-versa."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = 'model_symmetry', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
 			)
@@ -248,7 +248,7 @@ conditionalPanel("input.plot_type == 1",
 		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
 		plotlyOutput("plot_time", height = "800px", width="70%"),
 		br(),
-		column(6, offset=3, h3( tags$u(tags$b("Figure 8")),": Evolution of hazard ratios over time. 0-6m: first sixth months after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
+		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios over time. 0-6m: first sixth months after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
 	fluidRow(column(2, offset=5, align="center",	
 		dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
@@ -288,7 +288,7 @@ conditionalPanel("input.plot_type == 1",
 		h6("Choose exposure: "),
 		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
 		column(6, offset=3, 
-			h3( tags$u(tags$b("Figure 9.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) over time (in years after exposure, X axis). Please choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below.")
+			h3( tags$u(tags$b("Figure 10.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) over time (in years after exposure, X axis). Please choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below.")
 		)
 	),
 	fluidRow(align="center", 
@@ -302,7 +302,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		plotOutput("plot_CIP_b", height = "300px", width="70%"),
 		br(),
-		column(6, offset=3, h3( tags$u(tags$b("Figure 9.b")),": Evolution of CIP over time at different age range for exposure disorder. Use the buttons above to choose the exposure disorder. The age-specific CIPs are shown by clicking on the panel of outcome disorder in the previous figure. Confidence interval are represented by the grey area."))
+		column(6, offset=3, h3( tags$u(tags$b("Figure 10.b")),": Evolution of CIP over time at different age range for exposure disorder. Use the buttons above to choose the exposure disorder. The age-specific CIPs are shown by clicking on the panel of outcome disorder in the previous figure. Confidence interval are represented by the grey area."))
 	),
 	fluidRow(align="center", radioGroupButtons("sex_absolute_plot", label = NULL, choices=c("Men"="M", "Women"="K", "All"="all" ), direction='horizontal', selected="all")),
 
@@ -342,7 +342,7 @@ conditionalPanel("input.plot_type == 1",
 		),
 		column(3, align="left", 
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),
-			h3(tags$u(tags$b("Figure 10")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and 95% confidence intervals (horizontal and vertical lines)."),
+			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and 95% confidence intervals (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
 				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
@@ -416,17 +416,26 @@ conditionalPanel("input.plot_type == 2",
 		h3(tags$u(tags$b("Figure 1")),": Timeline of the Danish Register"),
 		br(), br(),
 
-		# table or bubble
+		# table
 		br(),br(),br(),
 		fluidRow(column(8, offset=2, h5("In ICD10 the mental health-related disorders are located in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), ". Each diagnosis includes several specific diagnosis. If you hover your mouse to a row under the column diagnosis, you will see the specific subgroups included in this interactive table." ))),
 		br(), br(),
 		dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
 		h3(tags$u(tags$b("Figure 2")),": The 10 mental disorder groups studied with their ICD10 and ICD8 codes."),
+		
+		# Bubble
 		column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px") ),
 		column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
 	),
+	
 
+	# Tree
+	fluidRow(
+		column(2, offset=1, br(),br(), br(),br(), br(),br() ,br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 4")),": Each diagnosis of our study includes several specific diagnosis. This interactive tree allows to explore them. Click a diagnosis to see the specific subgroups included.")),
+		column(9, align="left", collapsibleTreeOutput("tree", height="600px", width="100%") %>% withSpinner( color= "#2ecc71") )
+	),
 
+        
 
 
 	fluidRow(

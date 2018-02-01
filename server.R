@@ -12,6 +12,36 @@ shinyServer(function(input, output) {
 
 
 
+
+
+
+  # ------------------------------------------------------------------------------
+  # COLLAPSIBLE TREE OF IC10
+  # ------------------------------------------------------------------------------
+
+	output$tree=renderCollapsibleTree({ 
+		collapsibleTree(don_long, c("Name used in this study", "Subgroup"), zoomable=FALSE, root="Disorder Groups", fontSize = 17,
+		                fill = c(
+		                  # The root
+		                  "seashell",
+		                  # Unique regions
+		                  my_palette,
+		                  # Unique classes per region
+		                  my_palette[match(don_long$`Name used in this study`, names(color_attribution))]
+		                )
+		                )
+	})
+
+
+
+
+
+
+
+
+
+
+
   # ------------------------------------------------------------------------------
   # LINK ICD10 / ICD8
   # ------------------------------------------------------------------------------

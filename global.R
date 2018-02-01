@@ -10,10 +10,10 @@ library(ggplot2)
 library(tidyr)
 library("shinyWidgets")
 library(RColorBrewer)		# awesome color palettes
-library(d3heatmap)			# for heatmaps
+#library(d3heatmap)			# for heatmaps
 library(plotly)
 library(DT)
-library(networkD3)			# Classification tree of disease
+library(networkD3)			# Sankey
 library(packcircles)		# for calculating packcircles
 library(gridExtra)
 library(viridis)
@@ -23,6 +23,7 @@ library(ggiraph)			# To animate the ggplot2 bubble chart
 library(shinycssloaders)	# Spinner if plot takes time to load
 
 
+library(collapsibleTree)
 
 
 
@@ -75,6 +76,9 @@ color_attribution=c(
 don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
 colnames(don)=gsub("\\.", " ", colnames(don))
 don$Subgroup=gsub("@", "\n", don$Subgroup)
+
+don_long=read.table("DATA/Link_ICD10_ICD8_long.txt", header=T, sep="\t")
+colnames(don_long)=gsub("\\.", " ", colnames(don_long))
 
 
 
