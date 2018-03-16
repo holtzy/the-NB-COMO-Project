@@ -67,7 +67,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("We calculated hazard ratios between each pair of Disorder Groups. The vast majority of these disorder estimates are over 1, meaning that individuals with a prior mental disorder (exposure disorder), are at greater risk in developing subsequent mental disorder (outcome disorder)."), 
+			h5("We calculated hazard ratios between each pair of Disorder Groups. The vast majority of these disorder estimates are over 1, meaning that individuals with a prior mental disorder (prior-disorder), are at greater risk in developing subsequent mental disorder (later-disorder)."), 
 			br(),
 			h5("The plot below shows the distribution of hazard ratios for all COMO pairs. Note that all hazard ratios are greater than 1."),
 			br()
@@ -82,7 +82,7 @@ conditionalPanel("input.plot_type == 1",
 			h3(tags$u(tags$b("Figure 5")),": Distribution of Hazard Ratios. Each dot represents a pair of disorder."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+				selectInput(inputId = 'model_dotplothisto', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			)
 
 		)
@@ -106,9 +106,9 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("This Sankey diagram shows all possible permutations of relationship between pairs of mental Disorder Groups. Exposure disorders are represented on the left, while outcome disorders are on the right."),
+			h5("This Sankey diagram shows all possible permutations of relationship between pairs of mental Disorder Groups. Prior-disorders are represented on the left, while later-disorders are on the right."),
 			br(), 
-			h5("You can study the association between each exposure disorder group and outcome disorder group. To see the hazard ratios hover your mouse over the connecting threads. The Disorder Groups are colour coded. The Sankey diagram will automatically rearrange the order of exposure and outcome disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with varying effect sizes. Note that relative risk is different to absolute risk."),
+			h5("You can study the association between each prior-disorder group and later-disorder group. To see the hazard ratios hover your mouse over the connecting threads. The Disorder Groups are colour coded. The Sankey diagram will automatically rearrange the order of prior-disorder and later-disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with varying effect sizes. Note that relative risk is different to absolute risk."),
 			br()
 		)
 	),
@@ -116,8 +116,8 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(
 		column(6, offset=3,  align="center",
 			fluidRow(
-				column(6, h6(align="left", "exposure disorders")),
-				column(6, h6(align="right", "outcome disorders"))
+				column(6, h6(align="left", "prior-disorders")),
+				column(6, h6(align="right", "later-disorders"))
 			),
 			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
 			h3(tags$u(tags$b("Figure 6")),": Sankey diagram showing the general flows between Disorder Groups.")
@@ -126,7 +126,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(
 		column(4, offset=4,	align="center",		
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			),
 			
 			br(),
@@ -166,12 +166,12 @@ conditionalPanel("input.plot_type == 1",
 		),
 		column(2, 
 			br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),br(), br(), 
-			h3(tags$u(tags$b("Figure 7")),": Heatmap displaying hazard ratios (HR) between disorder pairs. Exposure disorders are located at the bottom, outcome disorders on the left."),
+			h3(tags$u(tags$b("Figure 7")),": Heatmap displaying hazard ratios (HR) between disorder pairs. Prior-disorders are located at the bottom, later-disorders on the left."),
 			br(),
 			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all"), direction='horizontal', selected="all"),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 					selectInput(inputId = "log_heatmap",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-					selectInput(inputId = 'model_heatmap', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+					selectInput(inputId = 'model_heatmap', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			)
 		)
 	),
@@ -210,7 +210,7 @@ conditionalPanel("input.plot_type == 1",
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), 
 			h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between Disorder Groups. Hazard ratio between all possible disorders and your selected disorder are represented on the left panel and vice-versa."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-				selectInput(inputId = 'model_symmetry', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+				selectInput(inputId = 'model_symmetry', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			)
 		)
 	),
@@ -252,7 +252,7 @@ conditionalPanel("input.plot_type == 1",
 	),
 	fluidRow(column(2, offset=5, align="center",	
 		dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
-				selectInput(inputId = 'model_evolution', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+				selectInput(inputId = 'model_evolution', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 		)
 	)),
 	br(),br(),br(),br(),
@@ -302,7 +302,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		plotOutput("plot_CIP_b", height = "300px", width="70%"),
 		br(),
-		column(6, offset=3, h3( tags$u(tags$b("Figure 10.b")),": Evolution of CIP over time at different age range for exposure disorder. Use the buttons above to choose the exposure disorder. The age-specific CIPs are shown by clicking on the panel of outcome disorder in the previous figure. Confidence interval are represented by the grey area."))
+		column(6, offset=3, h3( tags$u(tags$b("Figure 10.b")),": Evolution of CIP over time at different age range for prior-disorder. Use the buttons above to choose the prior-disorder. The age-specific CIPs are shown by clicking on the panel of outcome disorder in the previous figure. Confidence interval are represented by the grey area."))
 	),
 	fluidRow(align="center", radioGroupButtons("sex_absolute_plot", label = NULL, choices=c("Men"="M", "Women"="K", "All"="all" ), direction='horizontal', selected="all")),
 
@@ -345,7 +345,7 @@ conditionalPanel("input.plot_type == 1",
 			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and 95% confidence intervals (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_sexcomp",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
-				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A"="1", "Model B"="2") )
+				selectInput(inputId = 'model_sexcomp', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			)
 		),
 		br()
@@ -474,13 +474,13 @@ conditionalPanel("input.plot_type == 2",
 			hr()
 		),
 		column(8, offset=2, align="justify",
-			h5("We examined the association between all pairs of Disorder Groups taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (exposure-disorder) and temporally later disorder (outcome-disorder). All disorders were treated as time-varying. When investigating the association between a specific Disorder Group pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the exposure-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the exposure-disorder (if it happened during the follow-up), moment in which they became exposed."),
+			h5("We examined the association between all pairs of Disorder Groups taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (prior-disorder) and temporally later disorder (later-disorder). All disorders were treated as time-varying. When investigating the association between a specific Disorder Group pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the prior-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the prior-disorder (if it happened during the follow-up), moment in which they became exposed."),
 			br(),
-			h5("In those instances where there were ties, i.e. exposure- and outcome- disorders occurring on the same day, ties were broken by moving a proportion of the exposure-disorder diagnosis to one day earlier, otherwise the outcome-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the exposure-disorder occurred before the outcome-disorder among those with both exposure- and outcome-disorders occurring within 5 years."),
+			h5("In those instances where there were ties, i.e. prior- and later- disorders occurring on the same day, ties were broken by moving a proportion of the prior-disorder diagnosis to one day earlier, otherwise the later-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the prior-disorder occurred before the outcome-disorder among those with both prior- and later-disorders occurring within 5 years."),
 			br(),
-			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the exposure-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for mental comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Additional mental disorder comorbidity consisted on all other disorders except the specific exposure- and outcome-disorders and the total number of other disorders (2, 3 or 4+)."),
+			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the prior-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for mental comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Additional mental disorder comorbidity consisted on all other disorders except the specific prior- and later-disorders and the total number of other disorders (2, 3 or 4+)."),
 			br(),
-			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with exposure-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with exposure-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the exposure-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with an exposure-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with exposure-disorder who develop the outcome-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying, or emigrating."),
+			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with prior-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with prior-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying, or emigrating."),
 			br(),
 			h5("All analyses were performed in the secured platform of Statistic Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA). The data displayed in this application are available in the table below and a .csv version is available using the download button."),
 			br(),br()

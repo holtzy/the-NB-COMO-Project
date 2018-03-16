@@ -159,7 +159,7 @@ shinyServer(function(input, output) {
 			arrange(HR) %>% 
 			mutate(HR_rounded = (HR+1) - ( (HR+1) %%2 ) ) %>% 
 			mutate(y=ave(HR_rounded, HR_rounded, FUN=seq_along)) %>%
-		  	mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
+		  	mutate(text=paste("Prior-Disorder: ", exposure2, "\n", "Later-disorder: ", outcome2, "\n", "HR: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
 		 
 		# Make the plot
 		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
@@ -267,12 +267,12 @@ shinyServer(function(input, output) {
 
 
 		p=don %>%  
-		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Exposure Disorder: ", exposure2, "\n\n", "Outcome Disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
+		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Prior-disorder: ", exposure2, "\n\n", "Later-disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
 		  ggplot(aes( x=exposure2, y=outcome2)) + 
 			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
 			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
 			theme_grey(base_size = 9) + 
-			labs(x = "Exposure", y = "Outcome") + 
+			labs(x = "Prior-disorder", y = "Later-disorder") + 
 			scale_x_discrete(expand = c(0, 0)) +
 			scale_y_discrete(expand = c(0, 0)) + 
 			theme(
@@ -354,12 +354,12 @@ shinyServer(function(input, output) {
 		mymax=max(c(tmp$CI_right.x, tmp$CI_right.y))
 
 		# p1
-		mytitle=paste( "from ... to ", mydisease, sep="")
+		mytitle=paste( mydisease, " as a later-disorder.", sep="")
 		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
-		  ylim(0, mymax) +
 		  scale_y_reverse() +
+		  ylim(mymax, 0) +
 		  coord_flip() +
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
@@ -368,8 +368,8 @@ shinyServer(function(input, output) {
 		  ggtitle(bquote(italic(.(mytitle)))) +
 		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
-		# Create a scatterplot (plot2)
-		mytitle=paste( "from ", mydisease, " to ... ", sep="")
+		# p2
+		mytitle=paste( mydisease, " as a prior-disorder.", sep="")
 		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  ylim(0, mymax) +
@@ -434,7 +434,7 @@ shinyServer(function(input, output) {
 
 			# Prepare text
 			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "10-15y", time==6 ~  "15+y", time==6 ~  "15+y") ) %>%
-			mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
+			mutate( text=paste("Prior-disorder: ", mydisease, "\n\nLater-disorder: ", outcome2, "\n\nTime after diagnosis: ", real_label, "\n\nHazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
 		  
 
 		  	# Make the plot
@@ -487,7 +487,7 @@ shinyServer(function(input, output) {
   				geom_area() +
 		    	scale_fill_manual( values = color_attribution) +
   				facet_wrap( ~ outcome2) +
-  				xlab("time after exposure (in years)") +
+  				xlab("time after prior-disorder (in years)") +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0,40) +
 		    	theme( 
@@ -527,7 +527,7 @@ shinyServer(function(input, output) {
   				geom_line( size=2 ) +
   				facet_wrap( ~ clean_age_range, nrow=1) +
  		    	scale_color_manual( values = color_attribution) +
-  				xlab("time after exposure (in years)") +
+  				xlab("time after prior-disorder (in years)") +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0, 55 ) +
 		    	theme( 
@@ -539,7 +539,7 @@ shinyServer(function(input, output) {
 		      		strip.text.x = element_text(colour = "black", size=17),
 		      		plot.title = element_text(colour="#2ecc71", size=17, hjust=0.5)
 		      	) +
-		      	ggtitle(paste( "Exposure: ", mydisease, " | Outcome: ", myoutcome, sep=""))
+		      	ggtitle(paste( "Prior-disorder: ", mydisease, " | Later-disorder: ", myoutcome, sep=""))
 
 	})
 
@@ -570,7 +570,7 @@ shinyServer(function(input, output) {
 		  gather(variable, value, -(outcome2:sex)) %>%
 		  unite(temp, sex, variable) %>%
 		  spread(temp, value) %>%
-		  mutate(text=paste("Exposure: ", exposure2, "\n", "Outcome: ", outcome2, "\n", "HR for women: ", round(women_HR,1), " (", round(women_CI_left,1), " - ", round(women_CI_right,1), ")", "\n", "HR for men: ", round(men_HR,1) , " (", round(men_CI_left,1), " - ", round(women_CI_right,1), ")", sep="" )) %>%
+		  mutate(text=paste("Prior-disorder: ", exposure2, "\n", "Later-disorder: ", outcome2, "\n", "HR for women: ", round(women_HR,1), " (", round(women_CI_left,1), " - ", round(women_CI_right,1), ")", "\n", "HR for men: ", round(men_HR,1) , " (", round(men_CI_left,1), " - ", round(women_CI_right,1), ")", sep="" )) %>%
 		  mutate(biggest=as.factor(ifelse(men_HR>women_HR,1,2)))
 
 
@@ -580,7 +580,7 @@ shinyServer(function(input, output) {
 		    geom_segment( aes(x=men_HR, xend=men_HR, y=women_CI_left, yend=women_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_segment( aes(y=women_HR, yend=women_HR, x=men_CI_left, xend=men_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_point(aes(x=men_HR, y=women_HR, text=text, color=biggest)) +
-		    scale_colour_manual(values = c("#6699FF", "#CC99FF")) +
+		    scale_colour_manual(values = c("black", "black")) +
 	
 		    xlim(0,50) + ylim(0,50) +
 		    
