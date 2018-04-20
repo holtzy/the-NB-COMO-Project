@@ -231,7 +231,7 @@ shinyServer(function(input, output) {
 		don$exposure=match(don$exposure2, nodes$ID)-1
 
 		# Prepare a color scale:
-		ColourScal ='d3.scaleOrdinal() .domain(["Organic disorders" , "Substance abuse" , "Schizophrenia and related","Mood disorders" ,"Neurotic disorders", "Eating disorders" ,"Personality disorders", "Mental retardation", "Developmental disorders", "Behavioral disorders"]) .range(["#FDE725FF","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
+		ColourScal ='d3.scaleOrdinal() .domain(["Organic disorders" , "Substance use" , "Schizophrenia and related","Mood disorders" ,"Neurotic disorders", "Eating disorders" ,"Personality disorders", "Mental Intellectual Dis.", "Developmental disorders", "Behavioral disorders"]) .range(["#FDE725FF","#B4DE2CFF","#6DCD59FF","#35B779FF","#1F9E89FF","#26828EFF","#31688EFF","#3E4A89FF","#482878FF","#440154FF"])'
 
   		# Make the plot
  		sankeyNetwork(Links = don, Nodes = nodes,

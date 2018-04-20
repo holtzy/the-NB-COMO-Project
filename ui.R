@@ -202,7 +202,7 @@ conditionalPanel("input.plot_type == 1",
 		)
 	),
 
-	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders" ), direction='horizontal', selected="Mood disorders")),
+	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders" ), direction='horizontal', selected="Mood disorders")),
 	br(), br(),
 	fluidRow(align="center",
 		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
@@ -245,7 +245,7 @@ conditionalPanel("input.plot_type == 1",
 
 	fluidRow(align="center",
 		br(),
-		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
+		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
 		plotlyOutput("plot_time", height = "800px", width="70%"),
 		br(),
 		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios over time. 0-6m: first sixth months after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
@@ -286,7 +286,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		br(),
 		h6("Choose exposure: "),
-		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance abuse", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Retardation"="Mental retardation", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
+		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
 		column(6, offset=3, 
 			h3( tags$u(tags$b("Figure 10.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) over time (in years after exposure, X axis). Please choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below.")
 		)

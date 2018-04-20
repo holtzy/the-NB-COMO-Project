@@ -41,7 +41,7 @@ data=read.table(file="DATA/pairwiseHR.txt" , header=T, sep=";")
 data=data %>% mutate(exposure2=gsub("Exposed to ", "", exposure2)) 
 
 # I reorder the levels in data to respect the ICD10 classification order.
-mylevels = c("Organic disorders", "Substance abuse", "Schizophrenia and related", "Mood disorders",  "Neurotic disorders", "Eating disorders", "Personality disorders", "Mental retardation", "Developmental disorders", "Behavioral disorders")     
+mylevels = c("Organic disorders", "Substance use", "Schizophrenia and related", "Mood disorders",  "Neurotic disorders", "Eating disorders", "Personality disorders", "Intellectual Disabilities", "Developmental disorders", "Behavioral disorders")     
 data = data %>% mutate( outcome2 = factor(outcome2, levels=mylevels)) %>% mutate( exposure2 = factor(exposure2, levels=mylevels))
 
 
@@ -56,13 +56,13 @@ my_palette = viridis(10)
 my_palette = rev(my_palette)
 color_attribution=c(
 	"Organic disorders" = my_palette[1], 
-	"Substance abuse" = my_palette[2], 
+	"Substance use" = my_palette[2], 
 	"Schizophrenia and related" = my_palette[3], 
 	"Mood disorders" = my_palette[4],  
 	"Neurotic disorders" = my_palette[5], 
 	"Eating disorders" = my_palette[6], 
 	"Personality disorders" = my_palette[7], 
-	"Mental retardation" = my_palette[8], 
+	"Intellectual Disabilities" = my_palette[8], 
 	"Developmental disorders" = my_palette[9], 
 	"Behavioral disorders" = my_palette[10]
 )
@@ -88,6 +88,11 @@ colnames(don_long)=gsub("\\.", " ", colnames(don_long))
 # CIP data are in a R object, the object is called 'CIP'
 load("DATA/CIP_data.R")
 
+# 2 changes in the label:
+CIP$outcome2 <- gsub("Substance abuse", "Substance use", CIP$outcome2)
+CIP$exposure2 <- gsub("Substance abuse", "Substance use", CIP$exposure2)
+CIP$outcome2 <- gsub("Mental retardation", "Intellectual Disabilities", CIP$outcome2)
+CIP$exposure2 <- gsub("Mental retardation", "Intellectual Disabilities", CIP$exposure2)
 
 
 
