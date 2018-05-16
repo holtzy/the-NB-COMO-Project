@@ -1,3 +1,59 @@
+/* ------------------------------------------------------------*/ 
+/* ---- TOP MENU -------*/
+
+.navbar {
+  margin-bottom: 0px;
+  margin-top: 12px;
+  margin-right: 12px;
+}
+
+.navbar .navbar-nav {
+    float: right
+  }
+
+.navbar .navbar-header {
+  }
+
+.navbar-brand {
+    float: none;
+}
+
+.navbar-default {
+    background-color: white;
+    border-color: white;
+}
+
+.navbar-default .navbar-nav > li > a {
+  cursor: pointer;
+  margin: 3px;
+  border-radius: 5px !important;
+  text-decoration: none;
+  padding: 10px;
+  font-size: 22px;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -o-transition: .3s;
+  display: inline-block;
+  color: #2ecc71;
+  border: 2px #2ecc71 solid;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+   color: #fff;
+  background-color: #2ecc71;
+}
+
+.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+    color: white;
+    background-color: #2ecc71;
+}
+
+
+/* ------------------------------------------------------------*/ 
+
+
+
 
 
 
@@ -96,6 +152,7 @@ h3 {
   display: inline-block;
   color: #2ecc71;
   border: 2px #2ecc71 solid;
+  box-shadow: none !important;
 }
 
 .btn:hover {

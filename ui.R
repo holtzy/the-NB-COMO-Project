@@ -7,38 +7,198 @@
 
 
 
-shinyUI(fluidPage(
+tagList(
+
+	# This is to explain you have a CSS file that custom the appearance of the app
+	includeCSS("www/style.css"),
+
+	navbarPage(title="",
+
+
+	footer=fluidRow( align="center" ,
+		br(), br(),
+		column(4, offset=4,
+			hr(),
+			br(), br(),
+			"Created by", strong(a("Yan Holtz", style="color:lightblue", href="https://www.linkedin.com/in/yan-holtz-2477534a")), ".",
+			br(),
+			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/the-NB-COMO-Project")), ".",
+			br(),
+			"Copyright © 2017 The COMO Project",
+			br(), br(),br()
+			
+		),
+		br(),br()
+	),
+
+	header=	fluidRow(align="center", style="opacity:0.9 ;margin-top: 0px; width: 100%;",
+
+			helpText("The", style="color:black ; font-family: 'times'; font-size:30pt",
+						strong("NB-COMO", style="color:black; font-size:40pt"),
+						"project", style="color:black ; font-family: 'times'; font-size:30pt"
+			),
+			column(8, offset=2, hr())
+			),
+
+
+
+
+
 
 
 	
-	# This is to explain you have a CSS file that custom the appearance of the app
-	includeCSS("www/style.css") ,
+# #########
+#	TAB  INTRO
+# #########
+
+	tabPanel("Intro",
+
+
+		fluidRow(align="center", style="opacity:0.9 ;margin-top: 0px; width: 100%;",
+
+			column(6, offset=3, align="center",
+					div(img(src="NBP logo.jpg" , height = 230, width = 230) , style="text-align: center;"),
+					br(),
+					column(6, offset=0, align="justify",
+						h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring patterns of comorbidity (COMO) within treated mental disorders. Over the next few years we will explore different ways of describing the complex patterns of comorbidity between mental disorders. In particular, we wish to develop interactive data visualizations")
+					), 
+					column(6, offset=0, align="justify",
+						h5("that will allow the research community greater flexibility in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish National Patient Registry", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/"), "(DNPR), one of the world’s oldest nationwide hospital registries.")
+					),
+					hr()
+			),
+		br()
+		)
+	),
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# #########
+#	TAB 2 (METHODS)
+# #########
+tabPanel("Methods",
 
 	# -------------------------------------------------------------------------------------
-	# === ROW : title + Main tabs
-	fluidRow(
-		style="opacity:0.9; background-color: white ;margin-top: 10px; width: 100%;",
+	# ===  ROW : Time lapse + Circle Packing explaining ICD10 OR table with link ICD10 - ICD8
+	fluidRow(align="center",
+		
+		br(),br(),br(),br(),
+		
+		# title
+		fluidRow(column(5, offset=1,  align="left", id="definition",
+			h2( "1. Key features of the Danish registers"),
+			hr()
+		)),
 
-		column(4, offset=4, align="center",
+		# image
+		br(),br(),
+		column(8, offset=2, align="justify", 
+			h5("Danish health registers provide approved researchers access to anonymized person-level information on access to mental  health care via inpatient, outpatient, and emergency settings. Our study was built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. From 2000-2016, there has been a period of observation incident (new) cases can be confidently identified using the International Classification of Diseases (ICD)."),
 			br(),
-			helpText(
-				"The", style="color:black ; font-family: 'times'; font-size:30pt",
-				strong("NB-COMO", style="color:black; font-size:40pt"),
-				"project", style="color:black ; font-family: 'times'; font-size:30pt"
-			)
+			h5("As can be seen in the figure below, ICD8 was used from 1969 to 1994, and ICD10 since 1995. The mental health register was based on inpatient events between 1969 and 1994, after which outpatient and emergency visits were included."),
+			br()	
 		),
-		column(4, align="right",
+		div(img(src="TimeLine.png" , height = 250, width = 800) , style="text-align: center;"),
+		h3(tags$u(tags$b("Figure 1")),": Timeline of the Danish Register"),
+		br(), br(),
+
+		# table
+		br(),br(),br(),
+		fluidRow(column(8, offset=2, h5("In ICD10 the mental health-related disorders are located in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), ". Each diagnosis includes several specific diagnosis. If you hover your mouse to a row under the column diagnosis, you will see the specific subgroups included in this interactive table." ))),
+		br(), br(),
+		dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
+		h3(tags$u(tags$b("Figure 2")),": The 10 mental disorder groups studied with their ICD10 and ICD8 codes."),
+		
+		# Bubble
+		column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px") ),
+		column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
+	),
+	
+
+	# Tree
+	fluidRow(
+		column(2, offset=1, br(),br(), br(),br(), br(),br() ,br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 4")),": Each diagnosis of our study includes several specific diagnosis. This interactive tree allows to explore them. Click a diagnosis to see the specific subgroups included.")),
+		column(9, align="left", collapsibleTreeOutput("tree", height="600px", width="100%") %>% withSpinner( color= "#2ecc71") )
+	),
+
+        
+
+
+	fluidRow(
+		column(8, offset=1,  align="left",
+			h2( "2. Study population and assessment of mental disorders"),
+			hr()
+		),
+		column(8, offset=2, align="justify",
+			h5("We designed a population-based cohort study including all individuals living in Denmark during the study period (2000-2016) who had been born in Denmark between 1900 and 2015 (N = 5,940,778). Since 1968, the Danish Civil Registration System includes information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
 			br(),
-			tags$div(style="backgroundcolor:black;", class = "tab_header", radioGroupButtons( "plot_type",label = NULL, choices=c("Methodology"=2, "Results"=1, "Meet the team"=3), selected=2 ))
-			)
+			h5("Information on mental disorders was obtained from the Danish Psychiatric Central Research Register, which contains all admissions to psychiatric inpatient facilities since 1969 and, from 1995, contacts to outpatient psychiatric departments and emergency visits."),
+			br(),
+			h5("The diagnostic system used was the Danish modification of the International Classification of Diseases, 8th Revision (ICD-8) from 1969 to 1993, and 10th Revision (ICD-10) from 1994 onwards. We classified different mental disorders into 10 main groups, based on previous research using Danish registers and validated linkage between ICD-8 and ICD-10 codes. From this point onwards, we use “Disorder Group” to describe a set of specific ICD diagnoses. Note, because of issues related to ICD8 to ICD10 crosswalks, three disorder groups were restricted to specific disorders. The date of onset for each disorder group was defined as the first day of the first contact (inpatient, outpatient, or emergency visit) for any of the specific diagnoses within the ICD Disorder Group."),
+			br()
+		)
+	),	
+
+	fluidRow(
+		br(),br(),br(),
+		column(8, offset=1,  align="left",
+			h2( "3. Study design"),
+			hr()
 		),
-		column(8, offset=2, hr()),
-		br(), br(),	
- 	# -------------------------------------------------------------------------------------
+		column(8, offset=2, align="justify",
+			h5("For each of the ten disorder groups, follow-up started on January 1, 2000 or at the earliest age at which a person might develop the disorder (Table 1), whichever came later. Follow-up was terminated at onset of the disorder, death, emigration from Denmark, or December 31, 2016, whichever came first. Our analyses were based on incident cases diagnosed according to the ICD-10 classification system during the observation period (2000-2016), when inpatient, outpatient and emergency visits information were included in the register."),
+			br(),
+			h5("Individuals with a diagnosis of the disorder before the observation period were considered prevalent cases and excluded from the analyses. This stringent washout rule meant that individuals included in the analyses could not have previously accessed services for the specific mental disorder. for a 31-year period from 1969 to 1999. A sensitivity analysis in a previous study estimating incidence rates and lifetime risks for the same mental disorders revealed nearly identical results when extending the washout period to 36 years."),
+			br()
+		)
+	),
+	
+	fluidRow(
+		br(),br(),br(),
+		column(8, offset=1,  align="left",
+			h2( "4. Statistical analysis"),
+			hr()
+		),
+		column(8, offset=2, align="justify",
+			h5("We examined the association between all pairs of Disorder Groups taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (prior-disorder) and temporally later disorder (later-disorder). All disorders were treated as time-varying. When investigating the association between a specific Disorder Group pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the prior-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the prior-disorder (if it happened during the follow-up), moment in which they became exposed."),
+			br(),
+			h5("In those instances where there were ties, i.e. prior- and later- disorders occurring on the same day, ties were broken by moving a proportion of the prior-disorder diagnosis to one day earlier, otherwise the later-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the prior-disorder occurred before the outcome-disorder among those with both prior- and later-disorders occurring within 5 years."),
+			br(),
+			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the prior-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for mental comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Additional mental disorder comorbidity consisted on all other disorders except the specific prior- and later-disorders and the total number of other disorders (2, 3 or 4+)."),
+			br(),
+			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with prior-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with prior-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying, or emigrating."),
+			br(),
+			h5("All analyses were performed in the secured platform of Statistic Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA). The data displayed in this application are available in the table below and a .csv version is available using the download button."),
+			br(),br()
+			
+		)
+	),
+	br(),
+	fluidRow(align="center", 
+		downloadButton("load_ex_format1", label = "Download"),
+		actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/the-NB-COMO-Project';"), 
+		actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://www.ncbi.nlm.nih.gov/pubmed/';"), 
+		br(),br(),
+		column(10, offset=1, dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") ) 
+	)
+),
+
+
+
 
 
 
@@ -49,7 +209,7 @@ shinyUI(fluidPage(
 # #########
 #	TAB  RESULT
 # #########
-conditionalPanel("input.plot_type == 1",
+tabPanel("Results",
 
 
 
@@ -77,7 +237,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center",
 		br(),
 		radioGroupButtons("sex_longbar", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
-		column(6, offset=3, plotlyOutput("plot_longbar", height = "500px", width="900") ),
+		column(6, offset=3, plotlyOutput("plot_longbar", height = "500px", width="900") %>% withSpinner( color= "#2ecc71") ),
 		column(2, br(), br(), 
 			h3(tags$u(tags$b("Figure 5")),": Distribution of Hazard Ratios. Each dot represents a pair of disorder."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
@@ -119,7 +279,7 @@ conditionalPanel("input.plot_type == 1",
 				column(6, h6(align="left", "prior-disorders")),
 				column(6, h6(align="right", "later-disorders"))
 			),
-			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%"), 
+			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%") %>% withSpinner( color= "#2ecc71"), 
 			h3(tags$u(tags$b("Figure 6")),": Sankey diagram showing the general flows between Disorder Groups.")
 	)),
 
@@ -161,7 +321,7 @@ conditionalPanel("input.plot_type == 1",
 
 	fluidRow(
 		column(8, offset=1,  align="center",
-			plotlyOutput("plot_heat2", height=900, width=1000), 
+			plotlyOutput("plot_heat2", height=900, width=1000) %>% withSpinner( color= "#2ecc71"), 
 			br()
 		),
 		column(2, 
@@ -205,7 +365,7 @@ conditionalPanel("input.plot_type == 1",
 	fluidRow(align="center", radioGroupButtons("disease_symetry_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders" ), direction='horizontal', selected="Mood disorders")),
 	br(), br(),
 	fluidRow(align="center",
-		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%")),
+		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%") %>% withSpinner( color= "#2ecc71")),
 		column(2, offset=0, 
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), 
 			h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between Disorder Groups. Hazard ratio between all possible disorders and your selected disorder are represented on the left panel and vice-versa."),
@@ -362,158 +522,9 @@ conditionalPanel("input.plot_type == 1",
 
 
 # #########
-#	TAB 2 (METHODS)
-# #########
-conditionalPanel("input.plot_type == 2",
-	br(),br(),br(),
-
-
-
-	# -------------------------------------------------------------------------------------
-	# === ROW : Grey Parts with the introduction
-	fluidRow(align="center", style="opacity:0.9 ;margin-top: 0px; width: 100%;",
-
-
-
-		column(6, offset=3, align="center",
-				div(img(src="NBP logo.jpg" , height = 250, width = 250) , style="text-align: center;"),
-				column(6, offset=0, align="justify",
-					h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring patterns of comorbidity (COMO) within treated mental disorders. Over the next few years we will explore different ways of describing the complex patterns of comorbidity between mental disorders. In particular, we wish to develop")
-				), 
-				column(6, offset=0, align="justify",
-					h5("interactive data visualizations that will allow the research community greater flexibility in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish National Patient Registry", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/"), "(DNPR), one of the world’s oldest nationwide hospital registries.")
-				),
-				hr()
-		),
-	br()
-	),
- 	# -------------------------------------------------------------------------------------
-
-
-
-
-	# -------------------------------------------------------------------------------------
-	# ===  ROW : Time lapse + Circle Packing explaining ICD10 OR table with link ICD10 - ICD8
-	fluidRow(align="center",
-		
-		br(),br(),br(),br(),br(),br(), br(),br(),br(),
-
-		# title
-		fluidRow(column(5, offset=1,  align="left", id="definition",
-			h2( "1. Key features of the Danish registers"),
-			hr()
-		)),
-
-		# image
-		br(),br(),
-		column(8, offset=2, align="justify", 
-			h5("Danish health registers provide approved researchers access to anonymized person-level information on access to mental  health care via inpatient, outpatient, and emergency settings. Our study was built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. From 2000-2016, there has been a period of observation incident (new) cases can be confidently identified using the International Classification of Diseases (ICD)."),
-			br(),
-			h5("As can be seen in the figure below, ICD8 was used from 1969 to 1994, and ICD10 since 1995. The mental health register was based on inpatient events between 1969 and 1994, after which outpatient and emergency visits were included."),
-			br()	
-		),
-		div(img(src="TimeLine.png" , height = 250, width = 800) , style="text-align: center;"),
-		h3(tags$u(tags$b("Figure 1")),": Timeline of the Danish Register"),
-		br(), br(),
-
-		# table
-		br(),br(),br(),
-		fluidRow(column(8, offset=2, h5("In ICD10 the mental health-related disorders are located in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), ". Each diagnosis includes several specific diagnosis. If you hover your mouse to a row under the column diagnosis, you will see the specific subgroups included in this interactive table." ))),
-		br(), br(),
-		dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
-		h3(tags$u(tags$b("Figure 2")),": The 10 mental disorder groups studied with their ICD10 and ICD8 codes."),
-		
-		# Bubble
-		column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px") ),
-		column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
-	),
-	
-
-	# Tree
-	fluidRow(
-		column(2, offset=1, br(),br(), br(),br(), br(),br() ,br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 4")),": Each diagnosis of our study includes several specific diagnosis. This interactive tree allows to explore them. Click a diagnosis to see the specific subgroups included.")),
-		column(9, align="left", collapsibleTreeOutput("tree", height="600px", width="100%") %>% withSpinner( color= "#2ecc71") )
-	),
-
-        
-
-
-	fluidRow(
-		column(8, offset=1,  align="left",
-			h2( "2. Study population and assessment of mental disorders"),
-			hr()
-		),
-		column(8, offset=2, align="justify",
-			h5("We designed a population-based cohort study including all individuals living in Denmark during the study period (2000-2016) who had been born in Denmark between 1900 and 2015 (N = 5,940,778). Since 1968, the Danish Civil Registration System includes information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
-			br(),
-			h5("Information on mental disorders was obtained from the Danish Psychiatric Central Research Register, which contains all admissions to psychiatric inpatient facilities since 1969 and, from 1995, contacts to outpatient psychiatric departments and emergency visits."),
-			br(),
-			h5("The diagnostic system used was the Danish modification of the International Classification of Diseases, 8th Revision (ICD-8) from 1969 to 1993, and 10th Revision (ICD-10) from 1994 onwards. We classified different mental disorders into 10 main groups, based on previous research using Danish registers and validated linkage between ICD-8 and ICD-10 codes. From this point onwards, we use “Disorder Group” to describe a set of specific ICD diagnoses. Note, because of issues related to ICD8 to ICD10 crosswalks, three disorder groups were restricted to specific disorders. The date of onset for each disorder group was defined as the first day of the first contact (inpatient, outpatient, or emergency visit) for any of the specific diagnoses within the ICD Disorder Group."),
-			br()
-		)
-	),	
-
-	fluidRow(
-		br(),br(),br(),
-		column(8, offset=1,  align="left",
-			h2( "3. Study design"),
-			hr()
-		),
-		column(8, offset=2, align="justify",
-			h5("For each of the ten disorder groups, follow-up started on January 1, 2000 or at the earliest age at which a person might develop the disorder (Table 1), whichever came later. Follow-up was terminated at onset of the disorder, death, emigration from Denmark, or December 31, 2016, whichever came first. Our analyses were based on incident cases diagnosed according to the ICD-10 classification system during the observation period (2000-2016), when inpatient, outpatient and emergency visits information were included in the register."),
-			br(),
-			h5("Individuals with a diagnosis of the disorder before the observation period were considered prevalent cases and excluded from the analyses. This stringent washout rule meant that individuals included in the analyses could not have previously accessed services for the specific mental disorder. for a 31-year period from 1969 to 1999. A sensitivity analysis in a previous study estimating incidence rates and lifetime risks for the same mental disorders revealed nearly identical results when extending the washout period to 36 years."),
-			br()
-		)
-	),
-	
-	fluidRow(
-		br(),br(),br(),
-		column(8, offset=1,  align="left",
-			h2( "4. Statistical analysis"),
-			hr()
-		),
-		column(8, offset=2, align="justify",
-			h5("We examined the association between all pairs of Disorder Groups taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (prior-disorder) and temporally later disorder (later-disorder). All disorders were treated as time-varying. When investigating the association between a specific Disorder Group pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the prior-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the prior-disorder (if it happened during the follow-up), moment in which they became exposed."),
-			br(),
-			h5("In those instances where there were ties, i.e. prior- and later- disorders occurring on the same day, ties were broken by moving a proportion of the prior-disorder diagnosis to one day earlier, otherwise the later-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the prior-disorder occurred before the outcome-disorder among those with both prior- and later-disorders occurring within 5 years."),
-			br(),
-			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the prior-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for mental comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Additional mental disorder comorbidity consisted on all other disorders except the specific prior- and later-disorders and the total number of other disorders (2, 3 or 4+)."),
-			br(),
-			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with prior-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with prior-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying, or emigrating."),
-			br(),
-			h5("All analyses were performed in the secured platform of Statistic Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA). The data displayed in this application are available in the table below and a .csv version is available using the download button."),
-			br(),br()
-			
-		)
-	),
-	br(),
-	fluidRow(align="center", 
-		downloadButton("load_ex_format1", label = "Download"),
-		actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/the-NB-COMO-Project';"), 
-		actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://www.ncbi.nlm.nih.gov/pubmed/';"), 
-		br(),br(),
-		column(10, offset=1, dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") ) 
-	)
-),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# #########
 #	TAB 3
 # #########
-conditionalPanel("input.plot_type == 3",
+tabPanel("Meet the team",
 
 	br(),br(),
 
@@ -561,7 +572,7 @@ conditionalPanel("input.plot_type == 3",
 		)
 	)
 
-),
+)
 
 
 
@@ -575,21 +586,7 @@ conditionalPanel("input.plot_type == 3",
 
 	# -------------------------------------------------------------------------------------
 	# === 9/ Footer
-	fluidRow( align="center" ,
-		br(), br(),
-		column(4, offset=4,
-			hr(),
-			br(), br(),
-			"Created by", strong(a("Yan Holtz", style="color:lightblue", href="https://www.linkedin.com/in/yan-holtz-2477534a")), ".",
-			br(),
-			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/the-NB-COMO-Project")), ".",
-			br(),
-			"Copyright © 2017 The COMO Project",
-			br(), br(),br()
-			
-		),
-		br(),br()
-	)
+	
 
 	
 	# -------------------------------------------------------------------------------------
