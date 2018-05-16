@@ -76,6 +76,7 @@ color_attribution=c(
 don=read.table("DATA/Link_ICD10_ICD8.txt", header=T, sep="\t")
 colnames(don)=gsub("\\.", " ", colnames(don))
 don$Subgroup=gsub("@", "\n", don$Subgroup)
+colnames(don)[1] <- "Mental disorders"
 
 don_long=read.table("DATA/Link_ICD10_ICD8_long.txt", header=T, sep="\t")
 colnames(don_long)=gsub("\\.", " ", colnames(don_long))

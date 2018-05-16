@@ -49,7 +49,7 @@ shinyServer(function(input, output) {
 
 	# render the table
 	output$ICD10table <- DT::renderDataTable(
-			
+
 			displayableData<-DT::datatable( don , rownames = FALSE , 
 				options = list(
 					columnDefs = list(list(visible=FALSE, targets=8)),
@@ -267,7 +267,7 @@ shinyServer(function(input, output) {
 
 
 		p=don %>%  
-		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Prior-disorder: ", exposure2, "\n\n", "Later-disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,2), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
+		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Prior-disorder: ", exposure2, "\n\n", "Later-disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
 		  ggplot(aes( x=exposure2, y=outcome2)) + 
 			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
 			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
@@ -358,9 +358,8 @@ shinyServer(function(input, output) {
 		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
 		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
-		  scale_y_reverse() +
-		  ylim(mymax, 0) +
 		  coord_flip() +
+		  ylim(0, mymax) +
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
 		  ylab("Hazard Ratio") +
@@ -372,8 +371,9 @@ shinyServer(function(input, output) {
 		mytitle=paste( mydisease, " as a prior-disorder.", sep="")
 		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
 		  geom_bar(stat="identity") + 
-		  ylim(0, mymax) +
 		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
+		  scale_y_reverse() +
+		  ylim(mymax, 0) +
 		  coord_flip() +
 		  scale_fill_viridis(discrete=TRUE) +
 		  theme_classic() +
@@ -397,7 +397,7 @@ shinyServer(function(input, output) {
 
 		# Arrange and display the plots into a 2x1 grid
 		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
-		grid.arrange( p1, p3, p2, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
+		grid.arrange( p2, p3, p1, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
 	
 	})
 
@@ -426,15 +426,20 @@ shinyServer(function(input, output) {
 		 		filter(substr(model, 1, 15)=="adjusted_time_a") %>%
 		 		mutate(time=as.numeric( gsub("adjusted_time_after_expo_","", model)))	 
 		}
-		 	
+		
+
+
 		don %>%
 
 		 	# keep the good disease
 		 	filter( exposure2 == mydisease ) %>%
 
+		 	# Order levels in alphabetical order	
+		 	mutate(outcome2 = factor(outcome2, sort(levels(outcome2))))	%>%
+
 			# Prepare text
 			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "10-15y", time==6 ~  "15+y", time==6 ~  "15+y") ) %>%
-			mutate( text=paste("Prior-disorder: ", mydisease, "\n\nLater-disorder: ", outcome2, "\n\nTime after diagnosis: ", real_label, "\n\nHazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
+			mutate( text=paste("Prior-disorder: ", mydisease, "\n\nLater-disorder: ", outcome2, "\n\n", paste("Time after diagnosis in ",mydisease,": ",sep=""), real_label, "\n\nHazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
 		  
 
 		  	# Make the plot
@@ -454,12 +459,19 @@ shinyServer(function(input, output) {
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
 		      		strip.text.x = element_text(colour = "black", size=13),
 		      		plot.margin = unit(c(1,1,1,1), "cm")
-		      	)
+		      	) 
 
 		ggplotly(tooltip="text")	 
 	
 	})
 
+
+# Small text output for the X axis because plotly drives me crazy.
+output$xlablineplot <- renderText({
+	mydisease=input$disease_time_plot
+	text=paste("Time since diagnosis in ", mydisease, sep="")
+	return(text)
+	})
 
 
 
@@ -487,7 +499,7 @@ shinyServer(function(input, output) {
   				geom_area() +
 		    	scale_fill_manual( values = color_attribution) +
   				facet_wrap( ~ outcome2) +
-  				xlab("time after prior-disorder (in years)") +
+  				xlab( paste("Time since diagnosis in ", mydisease, " (Years)", sep="") ) +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0,40) +
 		    	theme( 
@@ -527,7 +539,7 @@ shinyServer(function(input, output) {
   				geom_line( size=2 ) +
   				facet_wrap( ~ clean_age_range, nrow=1) +
  		    	scale_color_manual( values = color_attribution) +
-  				xlab("time after prior-disorder (in years)") +
+  				xlab(paste("Time since diagnosis in ", mydisease, " (Years)", sep="") ) +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0, 55 ) +
 		    	theme( 

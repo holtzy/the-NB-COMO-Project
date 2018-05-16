@@ -63,7 +63,7 @@ tagList(
 						h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring patterns of comorbidity (COMO) within treated mental disorders. Over the next few years we will explore different ways of describing the complex patterns of comorbidity between mental disorders. In particular, we wish to develop interactive data visualizations")
 					), 
 					column(6, offset=0, align="justify",
-						h5("that will allow the research community greater flexibility in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish National Patient Registry", href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4655913/"), "(DNPR), one of the world’s oldest nationwide hospital registries.")
+						h5("that will allow the research community greater flexibility in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish Psychiatric Central Research Register", href="https://www.ncbi.nlm.nih.gov/pubmed/21775352"), "(DNPR), one of the world’s oldest nationwide hospital registries.")
 					),
 					hr()
 			),
@@ -107,10 +107,12 @@ tabPanel("Methods",
 		# image
 		br(),br(),
 		column(8, offset=2, align="justify", 
-			h5("Danish health registers provide approved researchers access to anonymized person-level information on access to mental  health care via inpatient, outpatient, and emergency settings. Our study was built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. From 2000-2016, there has been a period of observation incident (new) cases can be confidently identified using the International Classification of Diseases (ICD)."),
+			h5("Since 1968 , the ", a("Danish Civil Registration System", href="https://www.ncbi.nlm.nih.gov/pubmed/21775345"), " has maintained information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
 			br(),
-			h5("As can be seen in the figure below, ICD8 was used from 1969 to 1994, and ICD10 since 1995. The mental health register was based on inpatient events between 1969 and 1994, after which outpatient and emergency visits were included."),
-			br()	
+			h5("Danish health registers provide approved researchers access to anonymized person-level information on access to mental health care via inpatient, outpatient, and emergency settings. Our study was built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. In addition, from 2000 to 2016, there has been a period of observation of incident (new) cases, that can be confidently identified using the International Classification of Diseases (ICD)."),
+			br(),
+			h5("As can be seen in the figure below, the Danish Psychiatric Central Research Register contains information on all admissions to psychiatric inpatient facilities since 1969 and visits to outpatient psychiatric departments and emergency departments since 1995. The diagnostic system used was the Danish modification of the ",em("International Classification of Diseases, Eighth Revision"), " (ICD-8) from 1969 to 1993, and ", em("Tenth Revision"), " (ICD-10) from 1994 onwards."),
+			br()
 		),
 		div(img(src="TimeLine.png" , height = 250, width = 800) , style="text-align: center;"),
 		h3(tags$u(tags$b("Figure 1")),": Timeline of the Danish Register"),
@@ -118,7 +120,7 @@ tabPanel("Methods",
 
 		# table
 		br(),br(),br(),
-		fluidRow(column(8, offset=2, h5("In ICD10 the mental health-related disorders are located in the F chapter, with major groups clustered in two digit strata (e.g. F20-F29). In this paper we base our major disorder strata on the conditions outlined in", a("this paper", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), ". Each diagnosis includes several specific diagnosis. If you hover your mouse to a row under the column diagnosis, you will see the specific subgroups included in this interactive table." ))),
+		fluidRow(column(8, offset=2, h5("In order to keep the number of analyses tractable, and to ensure comparability between our analysis and", a("previous publications", href="https://www.ncbi.nlm.nih.gov/pubmed/24806211"), " based on the Danish registers, we used the ten level subchapter categories as described in ICD-10 (e.g. F00-F09, F10-19, F20-29, etc.) and corresponding diagnoses in ICD-8. Each disorder includes several specific diagnosis. If you hover your mouse to a row under the column “Mental disorders”, you will see examples of diagnoses included in each group in the following interactive table." ))),
 		br(), br(),
 		dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
 		h3(tags$u(tags$b("Figure 2")),": The 10 mental disorder groups studied with their ICD10 and ICD8 codes."),
@@ -144,11 +146,9 @@ tabPanel("Methods",
 			hr()
 		),
 		column(8, offset=2, align="justify",
-			h5("We designed a population-based cohort study including all individuals living in Denmark during the study period (2000-2016) who had been born in Denmark between 1900 and 2015 (N = 5,940,778). Since 1968, the Danish Civil Registration System includes information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
+			h5("We designed a population-based cohort study including all individuals born in Denmark during 1900-2015, who resided in the country during the study period (2000-2016) (5,940,778; 2,958,293 males and 2,982,485 females). The Danish Civil Registration System was used to link information from various national registries. Information on mental diseases was obtained from the Danish Psychiatric Central Research Register."),
 			br(),
-			h5("Information on mental disorders was obtained from the Danish Psychiatric Central Research Register, which contains all admissions to psychiatric inpatient facilities since 1969 and, from 1995, contacts to outpatient psychiatric departments and emergency visits."),
-			br(),
-			h5("The diagnostic system used was the Danish modification of the International Classification of Diseases, 8th Revision (ICD-8) from 1969 to 1993, and 10th Revision (ICD-10) from 1994 onwards. We classified different mental disorders into 10 main groups, based on previous research using Danish registers and validated linkage between ICD-8 and ICD-10 codes. From this point onwards, we use “Disorder Group” to describe a set of specific ICD diagnoses. Note, because of issues related to ICD8 to ICD10 crosswalks, three disorder groups were restricted to specific disorders. The date of onset for each disorder group was defined as the first day of the first contact (inpatient, outpatient, or emergency visit) for any of the specific diagnoses within the ICD Disorder Group."),
+			h5("From this point onwards, we use “disorder” to describe each group of specific diagnoses presented above. For each individual in the study, the date of onset for each disorder was defined as the date of first contact (inpatient, outpatient, or emergency visit)."),
 			br()
 		)
 	),	
@@ -160,9 +160,11 @@ tabPanel("Methods",
 			hr()
 		),
 		column(8, offset=2, align="justify",
-			h5("For each of the ten disorder groups, follow-up started on January 1, 2000 or at the earliest age at which a person might develop the disorder (Table 1), whichever came later. Follow-up was terminated at onset of the disorder, death, emigration from Denmark, or December 31, 2016, whichever came first. Our analyses were based on incident cases diagnosed according to the ICD-10 classification system during the observation period (2000-2016), when inpatient, outpatient and emergency visits information were included in the register."),
+			h5("We examined the association between all possible 90 pairs of disorders taking the temporal order into consideration (i.e. the association between two specific disorders was estimated in both directions). Depending on whether individuals had a diagnosis of one of the specific disorders (henceforth referred to as prior-disorder), we estimated the risk of being diagnosed with an additional disorder (henceforth referred to as later-disorder)."),
 			br(),
-			h5("Individuals with a diagnosis of the disorder before the observation period were considered prevalent cases and excluded from the analyses. This stringent washout rule meant that individuals included in the analyses could not have previously accessed services for the specific mental disorder. for a 31-year period from 1969 to 1999. A sensitivity analysis in a previous study estimating incidence rates and lifetime risks for the same mental disorders revealed nearly identical results when extending the washout period to 36 years."),
+			h5("For each specific pair, follow-up started on January 1, 2000 or at the earliest age at which a person might develop the later-disorder (Table 1), whichever came later. Follow-up was terminated at onset of the later-disorder, death, emigration from Denmark, or December 31, 2016, whichever came first. Our analyses were based on incident cases of the later-disorder, diagnosed during the observation period (2000-2016). Individuals with a diagnosis of the particular later-disorder before the observation period were considered prevalent cases and excluded from the analyses (i.e. prevalent cases were “washed-out”)."),
+			br(),
+			h5("When estimating the risk of a later-disorder, we considered all individuals to be exposed or unexposed to the each prior-disorder depending on whether they had a diagnosis between January 1st, 1969 and the end of follow-up. Persons with a prior-disorder were considered unexposed until the date of the first diagnosis, and exposed afterwards. It is important to note that we make no assumption that the later-disorder is causally related to the prior-disorder."),
 			br()
 		)
 	),
@@ -174,15 +176,15 @@ tabPanel("Methods",
 			hr()
 		),
 		column(8, offset=2, align="justify",
-			h5("We examined the association between all pairs of Disorder Groups taking into consideration the time order, i.e. each pair consisted of a temporally prior disorder (prior-disorder) and temporally later disorder (later-disorder). All disorders were treated as time-varying. When investigating the association between a specific Disorder Group pair, all individuals were free of the outcome-disorder at the beginning of follow-up (prevalent cases were excluded by design) and individuals were either (a) considered exposed to the prior-disorder if they were diagnosed before start of follow-up, or (b) remained unexposed until the onset of the prior-disorder (if it happened during the follow-up), moment in which they became exposed."),
+			h5("We compared the rate of diagnosis with a specific later-disorder between exposed and unexposed to each of the other nine prior-disorders using hazard ratios (HRs) and 95% confidence intervals (CI), obtained via Cox proportional hazards models with age as the underlying time scale."),
 			br(),
-			h5("In those instances where there were ties, i.e. prior- and later- disorders occurring on the same day, ties were broken by moving a proportion of the prior-disorder diagnosis to one day earlier, otherwise the later-disorder would only count for the unexposed, and the association would be underestimated. The proportion of cases to be moved was obtained by estimating the proportion of cases in which the prior-disorder occurred before the outcome-disorder among those with both prior- and later-disorders occurring within 5 years."),
+			h5("All estimates were adjusted for sex and calendar time (Model A). In order to adjust for additional preceding comorbidity, we also examined models that adjusted for mental disorder comorbidity with onset before the prior-disorder, but not with onset after the prior-disorder (Model B). This model adjusted for both (a) all additional types of disorders (apart from the specific prior- and later-disorders), and (b) the total number of other disorders (2, 3 or 4+)."),
 			br(),
-			h5("We then compared the rate of being diagnosed with the outcome-disorder between exposed and unexposed to the prior-disorder using hazard ratios, obtained via Cox Proportional Hazards models with age as the underlying time scale. All estimates were adjusted for sex and calendar time (model A); in a second step, the estimates were further adjusted for mental comorbidity with onset prior to exposure, but not with onset after exposure, as it might be an intermediate factor (model B). Additional mental disorder comorbidity consisted on all other disorders except the specific prior- and later-disorders and the total number of other disorders (2, 3 or 4+)."),
+			h5("We further adjusted for the interaction between type and number of co-occurring disorders, but the results were substantially the same as in model B (data not shown). Additionally, we included an interaction term between exposure to a prior-disorder and sex in order to obtain sex-specific estimates and test for differences between males and females. When the rates among the exposed and unexposed are not proportional over time, the Cox proportional hazards model estimates can be interpreted as an average HR over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder (i.e. lagged HRs)."),
 			br(),
-			h5("We further adjusted for the interaction between each type and each number of co-occurring disorders, but results were substantially the same as in model B. Additionally, we performed stratified sex-specific analyses to examine if there were differences between men and women. A hazard ratio of 5 obtained with model B, for example, can be interpreted as the rate of outcome-disorder among individuals diagnosed with prior-disorder being 5 times higher compared with individuals of the same sex, age and birth date, with the same comorbidities, but not diagnosed with prior-disorder. When the rates among the exposed and unexposed are not proportional over time, the Cox Proportional Hazards model estimates can be interpreted as an average hazard ratio over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder. Finally, we estimated the cumulative incidence proportion of being diagnosed with an outcome-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time, and they were estimated using competing risks survival analyses to account for the fact that persons are simultaneously at risk of developing the disorder, dying, or emigrating."),
+			h5("Finally, in order to quantitate the absolute risk of developing the later-disorder, we estimated the cumulative incidence proportion of diagnosis with a later-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time. These estimates were stratified by sex and age (at onset of the prior-disorder) groups (<20, 20-40, 40-60, 60-80, and >=80 years) using competing risks survival analyses to account for individual’s simultaneously risk of developing the disorder, dying or emigrating."),
 			br(),
-			h5("All analyses were performed in the secured platform of Statistic Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA). The data displayed in this application are available in the table below and a .csv version is available using the download button."),
+			h5("All analyses were performed on the secured platform of Statistics Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA)."),
 			br(),br()
 			
 		)
@@ -227,9 +229,9 @@ tabPanel("Results",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("We calculated hazard ratios between each pair of Disorder Groups. The vast majority of these disorder estimates are over 1, meaning that individuals with a prior mental disorder (prior-disorder), are at greater risk in developing subsequent mental disorder (later-disorder)."), 
+			h5("We estimated hazard ratios between each pair of disorders. Note that all estimates are over 1, meaning that being diagnosed with one of the disorders increased the risk of a subsequent diagnosis with each of the other disorders."), 
 			br(),
-			h5("The plot below shows the distribution of hazard ratios for all COMO pairs. Note that all hazard ratios are greater than 1."),
+			h5("The plot below shows the distribution of hazard ratios for all COMO pairs."),
 			br()
 		)
 	),
@@ -266,9 +268,9 @@ tabPanel("Results",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("This Sankey diagram shows all possible permutations of relationship between pairs of mental Disorder Groups. Prior-disorders are represented on the left, while later-disorders are on the right."),
+			h5("This Sankey diagram shows the associations between all possible combinations of mental disorders. Prior-disorders are represented on the left, while later-disorders are on the right"),
 			br(), 
-			h5("You can study the association between each prior-disorder group and later-disorder group. To see the hazard ratios hover your mouse over the connecting threads. The Disorder Groups are colour coded. The Sankey diagram will automatically rearrange the order of prior-disorder and later-disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with varying effect sizes. Note that relative risk is different to absolute risk."),
+			h5("It is possible to examine the association between each prior-disorder and later-disorder. To see the hazard ratios, hover your mouse over the connecting threads. The different disorders are colour-coded. The Sankey diagram will automatically rearrange the order of prior- and later-disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with effect sizes larger than a specific value. Note that relative risks are different than absolute risks."),
 			br()
 		)
 	),
@@ -314,7 +316,7 @@ tabPanel("Results",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("This heat map shows the pairwise hazard ratios. Darker shades of blue indicate larger hazard ratios (see colour legend on the right). Hover your mouse hover the cells to get the exact hazard ratio for each pair of Disorder Group."),
+			h5("This heat map shows the pairwise hazard ratios. Darker shades of blue indicate larger hazard ratios (see colour legend on the right). Hover your mouse hover the cells to get the exact hazard ratio for each pair of disorders."),
 			br()
 		)
 	),
@@ -350,14 +352,14 @@ tabPanel("Results",
 	# ===  ROW 4 : SYMETRY BETWEEN disorder
 	fluidRow(align="center",
 		column(8, offset=1,  align="left", id="globalsection",
-			h2("4. The bidirectional association between Disorder Group pairs – symmetrical and asymmetrical patterns"),
+			h2("4. The bidirectional association between pairs of disorders – symmetrical and asymmetrical patterns"),
 			hr()
 	)),
 
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("In these graphs we wish to explore the bidirectional association between Disorder Group pairs. The results suggests that most temporally ordered disorder pairs have a bidirectional relationship - there is an increased risk of disorder regardless of temporal order. However, some disorder pairs appeared to be quite symmetrical – we call these ‘mirror phenotypes’ – where it seems the risk of developing either disorder are similar regardless of which disorder comes first."),
+			h5("In these graphs, we wish to explore the bidirectional association between pairs of disorders. The results suggest that most temporally ordered disorder pairs have a bidirectional relationship - there is an increased risk of disorder regardless of temporal order. However, some disorder pairs appeared to be quite symmetrical – we call these ‘mirror phenotypes’ – where it seems the risk of developing either disorder are similar regardless of which disorder comes first."),
 			br()
 		)
 	),
@@ -407,6 +409,7 @@ tabPanel("Results",
 		br(),
 		radioGroupButtons("disease_time_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"),  direction='horizontal', selected="Mood disorders"),
 		plotlyOutput("plot_time", height = "800px", width="70%"),
+		textOutput("xlablineplot"),
 		br(),
 		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios over time. 0-6m: first sixth months after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
@@ -415,6 +418,7 @@ tabPanel("Results",
 				selectInput(inputId = 'model_evolution', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 		)
 	)),
+
 	br(),br(),br(),br(),
 
 
@@ -438,7 +442,7 @@ tabPanel("Results",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("The cumulative incidence proportion (CIP) shows the proportion of individuals who developed an outcome disorder after exposure to a prior mental disorder. A cumulative incidence proportion of 20 per 100 persons at 10 years suggests that approximately one in 5 people with an exposure disorder will subsequently develop a different (incident) disorder after 10 years of exposure."),
+			h5("The cumulative incidence proportion (CIP) shows the proportion of individuals who developed a later-disorder after being diagnosed with a prior-disorder. A cumulative incidence proportion of 20 per 100 persons at 10 years suggests that approximately one in 5 people with a prior-disorder will subsequently develop a different (incident) disorder within the following 10 years."),
 			br()
 		)
 	),
