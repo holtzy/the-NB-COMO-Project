@@ -25,7 +25,8 @@ tagList(
 			"Source code available on", strong(a("Github", style="color:lightblue", href="https://github.com/holtzy/the-NB-COMO-Project")), ".",
 			br(),
 			"Copyright © 2017 The COMO Project",
-			br(), br(),br()
+			br(), br(),br(),
+			includeScript("google-analytics.js")
 			
 		),
 		br(),br()
