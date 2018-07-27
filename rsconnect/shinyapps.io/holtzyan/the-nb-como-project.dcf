@@ -4,6 +4,6 @@ account: holtzyan
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 248470
-bundleId: 1376070
+bundleId: 1502932
 url: https://holtzyan.shinyapps.io/the-nb-como-project/
-when: 1526437945.21921
+when: 1532663488.159
