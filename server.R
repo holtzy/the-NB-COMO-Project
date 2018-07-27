@@ -237,7 +237,8 @@ shinyServer(function(input, output) {
  		sankeyNetwork(Links = don, Nodes = nodes,
              Source = "exposure", Target = "outcome",
              Value = "HR", NodeID = "ID", nodeWidth=40, fontSize=13,
-             nodePadding=20, colourScale=ColourScal, width=2000, height=2000 ) #, LinkGroup="group") 
+             nodePadding=20, colourScale=ColourScal, width=992, height=744 ) #, LinkGroup="group") 
+
 	})
 
 
@@ -347,7 +348,7 @@ shinyServer(function(input, output) {
 		  axis.title.x = element_text(size=16),
 
 		  axis.line = element_blank(),
-		  plot.margin = unit(rep(0,4), "cm")
+		  plot.margin = unit(rep(.3 ,4), "cm")
 		)
 		
 		# Maximum?
@@ -382,9 +383,9 @@ shinyServer(function(input, output) {
 		  ggtitle(bquote(italic(.(mytitle)))) +
 		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
-		p3 = ggplot(tmp, aes(x=outcome2, y=-100, color=outcome2)) + 
-		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5) +
-		  scale_color_viridis(discrete=TRUE) +
+		p3 = ggplot(tmp, aes(x=outcome2, y=-100)) + #, color=outcome2)) + 
+		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5, vjust=.7) +
+		  #scale_color_viridis(discrete=TRUE) +
 		  coord_flip() +
 		  theme_classic() +
 		  ylab("Hazard Ratio") +
@@ -398,6 +399,7 @@ shinyServer(function(input, output) {
 		# Arrange and display the plots into a 2x1 grid
 		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
 		grid.arrange( p2, p3, p1, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
+		#ggsave(file="test.png")
 	
 	})
 
