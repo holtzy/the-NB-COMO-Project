@@ -384,7 +384,7 @@ shinyServer(function(input, output) {
 		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
 		p3 = ggplot(tmp, aes(x=outcome2, y=-100)) + #, color=outcome2)) + 
-		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5, vjust=.7) +
+		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5) +
 		  #scale_color_viridis(discrete=TRUE) +
 		  coord_flip() +
 		  theme_classic() +
@@ -393,13 +393,14 @@ shinyServer(function(input, output) {
 		  theme(
 		    axis.ticks.x = element_line(color="white"),
 		    axis.title.x = element_text(color="white"),
-		    axis.text.x = element_text(color="white")
+		    axis.text.x = element_text(color="white"),
+		    plot.margin = unit(c(.9 ,.3, .3, .3), "cm")
 		  ) 
 
 		# Arrange and display the plots into a 2x1 grid
 		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
 		grid.arrange( p2, p3, p1, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
-		#ggsave(file="test.png")
+		#ggsave(p, file="symBarPaper.eps")
 	
 	})
 
