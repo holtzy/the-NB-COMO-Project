@@ -19,7 +19,7 @@ shinyServer(function(input, output) {
   # COLLAPSIBLE TREE OF IC10
   # ------------------------------------------------------------------------------
 
-	output$tree=renderCollapsibleTree({ 
+	output$tree=renderCollapsibleTree({
 		collapsibleTree(don_long, c("Name used in this study", "Subgroup"), zoomable=FALSE, root="Disorder Groups", fontSize = 17,
 		                fill = c(
 		                  # The root
@@ -45,15 +45,15 @@ shinyServer(function(input, output) {
   # ------------------------------------------------------------------------------
   # LINK ICD10 / ICD8
   # ------------------------------------------------------------------------------
-		
+
 
 	# render the table
 	output$ICD10table <- DT::renderDataTable(
 
-			displayableData<-DT::datatable( don , rownames = FALSE , 
+			displayableData<-DT::datatable( don , rownames = FALSE ,
 				options = list(
 					columnDefs = list(list(visible=FALSE, targets=8)),
-					#pageLength = 40, 
+					#pageLength = 40,
 					dom = 't',
       				rowCallback = JS(
         				"function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
@@ -62,10 +62,10 @@ shinyServer(function(input, output) {
         				"}"
       			)
 
-			)) #%>% 
+			)) #%>%
 			#formatStyle( 'Prevalent cases before follow up', background = styleColorBar(don[,6], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
 			#formatStyle( 'Persons at risk at start of follow up', background = styleColorBar(don[,7], alpha('skyblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) %>%
-			#formatStyle( 'New cases during follow up', background = styleColorBar(don[,8], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' ) 
+			#formatStyle( 'New cases during follow up', background = styleColorBar(don[,8], alpha('steelblue',0.3)), backgroundSize = '80% 50%', backgroundRepeat = 'no-repeat', backgroundPosition = 'center' )
 	)
 
 
@@ -83,9 +83,9 @@ shinyServer(function(input, output) {
   # Circle Packing
   # ------------------------------------------------------------------------------
 
-	output$plot_circlepack=renderggiraph({ 
+	output$plot_circlepack=renderggiraph({
 
-		# Generate the layout 
+		# Generate the layout
 		packing <- circleProgressiveLayout(don[,8], sizetype='area')
 		packing$radius=0.98*packing$radius
 		my_n_points=60
@@ -99,12 +99,12 @@ shinyServer(function(input, output) {
 		# Prepare text to display on hover
 		packing$text=paste('<span style="font-size: 17px">', packing$disease, "\n\n", "</br>", "Number of cases:", packing$N, "\n", '</span>')
 		dat.gg$text= rep( packing$text, each=my_n_points+1)
-  
+
 		# Make the plot
-		p=ggplot() + 
+		p=ggplot() +
   			geom_polygon_interactive(data = dat.gg, aes(x, y, group = id, fill=as.factor(id), tooltip = text), colour = "black", alpha = 0.6, size=0.1) +
  		 	scale_fill_manual( values = color_attribution ) +
- 		 	
+
  		 	geom_text(data = packing, aes(x, y, size=N, label = gsub(" ", "\n", disease))) +
  		 	scale_size_continuous(range = c(0.8,3)) +
 
@@ -115,7 +115,7 @@ shinyServer(function(input, output) {
    			coord_equal()
 
   		ggiraph(ggobj = p, width_svg = 3, height_svg = 3)
-		
+
 	})
 
 
@@ -123,9 +123,9 @@ shinyServer(function(input, output) {
 
 
 
-   
 
- 
+
+
 
 
 
@@ -138,10 +138,10 @@ shinyServer(function(input, output) {
   # HISTOGRAM DOTPLOT
   # ------------------------------------------------------------------------------
 
-	output$plot_longbar=renderPlotly({ 
+	output$plot_longbar=renderPlotly({
 
 		# Filter the data following the choice of the user
-		if( input$sex_longbar=="all" ){ 
+		if( input$sex_longbar=="all" ){
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_dotplothisto)
 			don = data %>% filter(model==list[choice] & !is.na(HR) )
@@ -150,17 +150,17 @@ shinyServer(function(input, output) {
 			choice=as.numeric(input$model_dotplothisto)
 			don = data %>% filter(model==list[choice] & sex==input$sex_longbar & !is.na(HR) )
 		}
-		
+
 		# Decide a color
-		mycolor = ifelse(input$sex_longbar=="all" , "grey", ifelse(input$sex_longbar=="men", "#6699FF", "#CC99FF" )) 
+		mycolor = ifelse(input$sex_longbar=="all" , "grey", ifelse(input$sex_longbar=="men", "#6699FF", "#CC99FF" ))
 
 		# Prepare don for a hacked histogram
-		don = don %>% 
-			arrange(HR) %>% 
-			mutate(HR_rounded = (HR+1) - ( (HR+1) %%2 ) ) %>% 
+		don = don %>%
+			arrange(HR) %>%
+			mutate(HR_rounded = (HR+1) - ( (HR+1) %%2 ) ) %>%
 			mutate(y=ave(HR_rounded, HR_rounded, FUN=seq_along)) %>%
-		  	mutate(text=paste("Prior-Disorder: ", exposure2, "\n", "Later-disorder: ", outcome2, "\n", "HR: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) 
-		 
+		  	mutate(text=paste("Prior-Disorder: ", exposure2, "\n", "Later-disorder: ", outcome2, "\n", "HR: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" ))
+
 		# Make the plot
 		p=ggplot(don, aes(x=HR_rounded, y=y) ) +
       		  geom_point( aes(text=text), size=5, color=mycolor ) +
@@ -179,7 +179,7 @@ shinyServer(function(input, output) {
 
 		# Eventually log scale?
 		if( input$log_dotplothisto == "log"){ p = p + scale_x_log10() }
-		
+
 		ggplotly(p, tooltip="text")
 
 
@@ -195,10 +195,10 @@ shinyServer(function(input, output) {
   # SANKEY diagram
   # ------------------------------------------------------------------------------
 
-	output$plot_sankey=renderSankeyNetwork({ 
+	output$plot_sankey=renderSankeyNetwork({
 
 		# Filter the data following the choice of the user
-		if( input$sex_sankey=="all" ){ 
+		if( input$sex_sankey=="all" ){
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_sankey)
 			don = data %>% filter(model==list[choice] & !is.na(HR) )
@@ -209,23 +209,23 @@ shinyServer(function(input, output) {
 		}
 
 		# Prepare data?
-		don = don %>% 
-		  
+		don = don %>%
+
 			# Select subset of the data
-			filter( HR>input$sankey_thres ) %>% 
-		    
+			filter( HR>input$sankey_thres ) %>%
+
   			# make a difference between outcome and exposure (I add a space to outcome)
-  			select(exposure2, outcome2, HR) %>% 
-  			
+  			select(exposure2, outcome2, HR) %>%
+
   			# Make sure to respect the ICD10 order
   			arrange(exposure2, outcome2) %>%
-  			
+
   			# Add a space after outcome to make it slightly different
   			mutate(outcome2=paste(outcome2, " ", sep=""))
 
  		# Make a data frame with nodes
  		nodes=data.frame( ID = c(as.character(unique(don$exposure2)), as.character(unique(don$outcome2)) ) )
- 
+
  		# Make a data frame with the links
  		don$outcome=match(don$outcome2, nodes$ID)-1
 		don$exposure=match(don$exposure2, nodes$ID)-1
@@ -237,7 +237,7 @@ shinyServer(function(input, output) {
  		sankeyNetwork(Links = don, Nodes = nodes,
              Source = "exposure", Target = "outcome",
              Value = "HR", NodeID = "ID", nodeWidth=40, fontSize=13,
-             nodePadding=20, colourScale=ColourScal, width=992, height=744 ) #, LinkGroup="group") 
+             nodePadding=20, colourScale=ColourScal, width=992, height=744 ) #, LinkGroup="group")
 
 	})
 
@@ -252,11 +252,11 @@ shinyServer(function(input, output) {
   # Heatmap
   # ------------------------------------------------------------------------------
 
-	output$plot_heat2=renderPlotly({ 
+	output$plot_heat2=renderPlotly({
 
 
 		# Filter the data following the choice of the user
-		if( input$sex_heatmap=="all" ){ 
+		if( input$sex_heatmap=="all" ){
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_heatmap)
 			don = data %>% filter(model==list[choice] & !is.na(HR) )
@@ -267,18 +267,18 @@ shinyServer(function(input, output) {
 		}
 
 
-		p=don %>%  
+		p=don %>%
 		  mutate(text=paste('<span style="font-size: 17px">', "\n", "Prior-disorder: ", exposure2, "\n\n", "Later-disorder: ", outcome2, "\n\n", "Hazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", "\n"), '</span>') %>%
-		  ggplot(aes( x=exposure2, y=outcome2)) + 
-			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) + 
+		  ggplot(aes( x=exposure2, y=outcome2)) +
+			geom_tile(aes(fill = HR, text=text), colour = "white", size=4) +
 			scale_fill_gradient(low = "white", high = "steelblue", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60) ) +
-			theme_grey(base_size = 9) + 
-			labs(x = "Prior-disorder", y = "Later-disorder") + 
+			theme_grey(base_size = 9) +
+			labs(x = "Prior-disorder", y = "Later-disorder") +
 			scale_x_discrete(expand = c(0, 0)) +
-			scale_y_discrete(expand = c(0, 0)) + 
+			scale_y_discrete(expand = c(0, 0)) +
 			theme(
-			  #legend.position = "none", 
-			  axis.ticks = element_blank(), 
+			  #legend.position = "none",
+			  axis.ticks = element_blank(),
 			  axis.text.x = element_text(size = 10, angle = 45, hjust = 0, colour = "grey50"),
 			  axis.title = element_text(size = 14, angle = 0, hjust = 1, colour = "#2ecc71"),
 			  axis.text.y = element_text(size = 10, angle = 0, hjust = 0, colour = "grey50"),
@@ -286,9 +286,9 @@ shinyServer(function(input, output) {
 			)
 
 		if (input$log_heatmap=="log"){ p = p + scale_fill_gradient(low = "white", high = "steelblue", trans = "log", breaks=c(0, 1, 10, 20, 30, 40, 50, 60), labels=c(0, 1, 10, 20, 30, 40, 50, 60)) }
-		
+
 		ggplotly(p, tooltip="text")
-	
+
 	})
 
 
@@ -306,7 +306,7 @@ shinyServer(function(input, output) {
   # Symmetric Barplot
   # ------------------------------------------------------------------------------
 
-	output$plot_symbar=renderPlot({ 
+	output$plot_symbar=renderPlot({
 
 		# Recover what user choosed.
 		mysex=input$sex_symetry_plot
@@ -314,7 +314,7 @@ shinyServer(function(input, output) {
 
 
 		# Filter the data following the choice of the user
-		if( input$sex_symetry_plot=="all" ){ 
+		if( input$sex_symetry_plot=="all" ){
 			list=c("basic_confounders","kessler_prev","kessler_prev_interactions")
 			choice=as.numeric(input$model_symmetry)
 			don = data %>% filter(model==list[choice] & !is.na(HR) )
@@ -328,10 +328,10 @@ shinyServer(function(input, output) {
 		don = don %>%  mutate( exposure2 = factor(exposure2, levels=rev(mylevels))) %>%  mutate( outcome2 = factor( outcome2, levels=rev(mylevels)))
 
 		# Create 2 datasets: every disease --> schizophrenia and return
-		a=don %>% 
+		a=don %>%
 		  filter( exposure2==mydisease ) %>%
 		  select( outcome2, HR, CI_left, CI_right)
-		b=don %>% 
+		b=don %>%
 		  filter( outcome2==mydisease ) %>%
 		  select( exposure2, HR, CI_left, CI_right)
 		tmp=merge(a, b, by.x="outcome2", by.y="exposure2", all=T)
@@ -350,14 +350,14 @@ shinyServer(function(input, output) {
 		  axis.line = element_blank(),
 		  plot.margin = unit(rep(.3 ,4), "cm")
 		)
-		
+
 		# Maximum?
 		mymax=max(c(tmp$CI_right.x, tmp$CI_right.y))
 
 		# p1
 		mytitle=paste( mydisease, " as a later-disorder.", sep="")
-		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) + 
-		  geom_bar(stat="identity") + 
+		p1 <- ggplot(tmp, aes(x=outcome2, y=HR.y, fill=outcome2)) +
+		  geom_bar(stat="identity") +
 		  geom_errorbar( aes(ymin=CI_left.y, ymax=CI_right.y), width=0.3 ) +
 		  coord_flip() +
 		  ylim(0, mymax) +
@@ -370,8 +370,8 @@ shinyServer(function(input, output) {
 
 		# p2
 		mytitle=paste( mydisease, " as a prior-disorder.", sep="")
-		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) + 
-		  geom_bar(stat="identity") + 
+		p2 <- ggplot(tmp, aes(x=outcome2, y=HR.x, fill=outcome2)) +
+		  geom_bar(stat="identity") +
 		  geom_errorbar( aes(ymin=CI_left.x, ymax=CI_right.x), width=0.3 ) +
 		  scale_y_reverse() +
 		  ylim(mymax, 0) +
@@ -383,7 +383,7 @@ shinyServer(function(input, output) {
 		  ggtitle(bquote(italic(.(mytitle)))) +
 		  theme( plot.title = element_text(color="grey", size=15, hjust=0.5))
 
-		p3 = ggplot(tmp, aes(x=outcome2, y=-100)) + #, color=outcome2)) + 
+		p3 = ggplot(tmp, aes(x=outcome2, y=-100)) + #, color=outcome2)) +
 		  geom_text( aes(label=gsub(" ","\n", outcome2)), size=5) +
 		  #scale_color_viridis(discrete=TRUE) +
 		  coord_flip() +
@@ -395,13 +395,13 @@ shinyServer(function(input, output) {
 		    axis.title.x = element_text(color="white"),
 		    axis.text.x = element_text(color="white"),
 		    plot.margin = unit(c(.9 ,.3, .3, .3), "cm")
-		  ) 
+		  )
 
 		# Arrange and display the plots into a 2x1 grid
 		title=textGrob(mydisease,gp=gpar(fontsize=20,font=2))
 		grid.arrange( p2, p3, p1, ncol=3 , widths=c(0.41, 0.18,  0.41) , top = title )
 		#ggsave(p, file="symBarPaper.eps")
-	
+
 	})
 
 
@@ -413,23 +413,23 @@ shinyServer(function(input, output) {
   # Line plot time
   # ------------------------------------------------------------------------------
 
-	output$plot_time=renderPlotly({ 
+	output$plot_time=renderPlotly({
 
 
 		# Recover what user choosed.
 		mydisease=input$disease_time_plot
 
 		# Recover the model:
-		if( input$model_evolution==1 ){ 
-			don = data %>% 
+		if( input$model_evolution==1 ){
+			don = data %>%
 		 		filter(substr(model, 1, 15)=="time_after_expo") %>%
-		 		mutate(time=as.numeric( gsub("time_after_expo_","", model)))	 
+		 		mutate(time=as.numeric( gsub("time_after_expo_","", model)))
 		}else{
-			don = data %>% 
+			don = data %>%
 		 		filter(substr(model, 1, 15)=="adjusted_time_a") %>%
-		 		mutate(time=as.numeric( gsub("adjusted_time_after_expo_","", model)))	 
+		 		mutate(time=as.numeric( gsub("adjusted_time_after_expo_","", model)))
 		}
-		
+
 
 
 		don %>%
@@ -437,13 +437,13 @@ shinyServer(function(input, output) {
 		 	# keep the good disease
 		 	filter( exposure2 == mydisease ) %>%
 
-		 	# Order levels in alphabetical order	
+		 	# Order levels in alphabetical order
 		 	mutate(outcome2 = factor(outcome2, sort(levels(outcome2))))	%>%
 
 			# Prepare text
-			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "10-15y", time==6 ~  "15+y", time==6 ~  "15+y") ) %>%
+			mutate( real_label = case_when( time==1 ~ "0-6m", time==2 ~ "6-12m", time==3 ~ "1-2y", time==4 ~ "2-5y", time==5 ~ "5-10y", time==6 ~  "10-15y", time==7 ~  "15+y") ) %>%
 			mutate( text=paste("Prior-disorder: ", mydisease, "\n\nLater-disorder: ", outcome2, "\n\n", paste("Time after diagnosis in ",mydisease,": ",sep=""), real_label, "\n\nHazard Ratio: ", round(HR,1), " (", round(CI_left,1), " - ", round(CI_right,1), ")", sep="" )) %>%
-		  
+
 
 		  	# Make the plot
 		  	ggplot( aes(x=time, color=outcome2)) +
@@ -456,16 +456,16 @@ shinyServer(function(input, output) {
 		    	scale_y_log10() +
 		    	xlab("") +
 		    	facet_wrap(~outcome2) +
-		    	theme( 
+		    	theme(
 		      		legend.position = "none",
 		      		axis.text.x = element_text(angle = 45, hjust=0.8),
 		      		strip.background = element_rect(colour = "white", fill = alpha("white",0.2) ),
 		      		strip.text.x = element_text(colour = "black", size=13),
 		      		plot.margin = unit(c(1,1,1,1), "cm")
-		      	) 
+		      	)
 
-		ggplotly(tooltip="text")	 
-	
+		ggplotly(tooltip="text")
+
 	})
 
 
@@ -482,21 +482,21 @@ output$xlablineplot <- renderText({
   # CIP PLOT .a AND .b
   # ------------------------------------------------------------------------------
 
-	output$plot_CIP_a=renderPlot({ 
+	output$plot_CIP_a=renderPlot({
 
 		# Recover what user choosed.
 		mydisease=input$disease_CIP_plot
 
-		# Make the plot	
-		CIP %>% 
-  			
+		# Make the plot
+		CIP %>%
+
   			# Keep the chosen data
   			filter(sex==input$sex_absolute_plot & age_group=="all" & exposure2==mydisease) %>%
 
 
 			# Prepare text
 			#mutate(text=paste("Exposure: ", mydisease, "\n\nOutcome: ", outcome2, "\n\nTime after exposure: ", real_label, "\n\nHazard Ratio: ", round(HR,2), sep="" )) %>%
-		  
+
 		  	# Make the plot
 			ggplot(aes(x=time_since_dx, y=cip, fill=outcome2)) +
   				geom_area() +
@@ -505,7 +505,7 @@ output$xlablineplot <- renderText({
   				xlab( paste("Time since diagnosis in ", mydisease, " (Years)", sep="") ) +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0,40) +
-		    	theme( 
+		    	theme(
 		      		legend.position = "none",
 		      		axis.text = element_text(size=10),
 		      		axis.title = element_text(size=14),
@@ -516,9 +516,9 @@ output$xlablineplot <- renderText({
 	})
 
 
-	
 
-	output$plot_CIP_b=renderPlot({ 
+
+	output$plot_CIP_b=renderPlot({
 
 		# Recover what user choosed.
 		mydisease=input$disease_CIP_plot
@@ -526,16 +526,16 @@ output$xlablineplot <- renderText({
 		# Recover the outcome = where the user click:
 		myoutcome = ifelse( is.null(input$plot1_click$panelvar1)  , mylevels[-match(mydisease, mylevels)][4], input$plot1_click$panelvar1)
 
-		# Prepare data subset	
-		tmp = CIP %>% 
-  			
+		# Prepare data subset
+		tmp = CIP %>%
+
   			# Keep the chosen data
   			filter(sex==input$sex_absolute_plot & age_group!="all" & exposure2==mydisease & outcome2==myoutcome) %>%
-		 	
+
  			# Create a more readabe column for age range
   			mutate(clean_age_range = paste("age: ",age_group,sep="")) %>% mutate(clean_age_range = gsub("\\[", "from ", clean_age_range)) %>% mutate(clean_age_range = gsub(",", " to ", clean_age_range)) %>% mutate(clean_age_range = gsub(")", "", clean_age_range)) %>%
-			mutate(clean_age_range = factor(clean_age_range, levels=c( "age: from 0 to 20", "age: from 20 to 40", "age: from 40 to 60", "age: from 60 to 80", "age: 80+"))) 
-		  
+			mutate(clean_age_range = factor(clean_age_range, levels=c( "age: from 0 to 20", "age: from 20 to 40", "age: from 40 to 60", "age: from 60 to 80", "age: 80+")))
+
 		# plot
 		tmp %>% ggplot(aes(x=time_since_dx, y=cip, color=outcome2, fill=outcome2)) +
 				geom_ribbon(aes(ymin = cip_low, ymax = cip_high), fill = "grey70", color = "grey70") +
@@ -545,7 +545,7 @@ output$xlablineplot <- renderText({
   				xlab(paste("Time since diagnosis in ", mydisease, " (Years)", sep="") ) +
   				ylab("Cumulative incidence proportion (%)") +
   				ylim(0, 55 ) +
-		    	theme( 
+		    	theme(
 		      		legend.position = "none",
 		      		title = element_text( size=18),
 		      		axis.text = element_text(size=10),
@@ -570,17 +570,17 @@ output$xlablineplot <- renderText({
   # Scatterplot Sex Comparison
   # ------------------------------------------------------------------------------
 
-	output$plot_sexcomp=renderPlotly({ 
+	output$plot_sexcomp=renderPlotly({
 
 		# Recover what model user choosed.
 		list=c("sex_basic_confounders","sex_kessler_prev","sex_kessler_prev_interactions")
 		choice=as.numeric(input$model_sexcomp)
 		mymodel=list[choice]
-	
+
 
 		# prepare data
-		tmp=data %>%  
-		  filter(model==mymodel) %>% 
+		tmp=data %>%
+		  filter(model==mymodel) %>%
 		  select( outcome2, exposure2, sex, HR, CI_left, CI_right) %>%
 		  gather(variable, value, -(outcome2:sex)) %>%
 		  unite(temp, sex, variable) %>%
@@ -591,14 +591,14 @@ output$xlablineplot <- renderText({
 
 		# Make the plot
 		p=ggplot(tmp) +
-		    
+
 		    geom_segment( aes(x=men_HR, xend=men_HR, y=women_CI_left, yend=women_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_segment( aes(y=women_HR, yend=women_HR, x=men_CI_left, xend=men_CI_right, color=biggest, text=""), alpha=1, size=0.3) +
 		    geom_point(aes(x=men_HR, y=women_HR, text=text, color=biggest)) +
 		    scale_colour_manual(values = c("black", "black")) +
-	
+
 		    xlim(0,50) + ylim(0,50) +
-		    
+
 		    geom_abline( intercept=0, slope=1, linetype="dotted") +
 		    theme(
 		    	legend.position="none"
@@ -607,7 +607,7 @@ output$xlablineplot <- renderText({
 		    #coord_equal() +
 		    annotate("text", x = c(30,40), y = c(50,20), label = c("Women have higher HR", "Men have higher HR") , color=c("#CC99FF", "#6699FF"), size=5 , angle=0, fontface="bold", vjust=c(0,1) )
 
-		
+
 		# Eventually log scale?
 		if( input$log_sexcomp == "log"){ p = p + scale_x_log10() + scale_y_log10() }
 
@@ -618,20 +618,20 @@ output$xlablineplot <- renderText({
 
 
 
-  
-   
+
+
   # ------------------------------------------------------------------------------
   # RAW DATA
   # ------------------------------------------------------------------------------
-		
+
 		# Show it in a table
 		observe({
 
 			# Make the data nicer to see
 			don=data %>% mutate(
 				exposure=gsub("expo_","",exposure),
-				personyears0=round(personyears0,1),	
-				personyears1=round(personyears1,1),	
+				personyears0=round(personyears0,1),
+				personyears1=round(personyears1,1),
 				HR=round(HR,2),
 				CI_left=round(CI_left,2),
 				CI_right=round(CI_right,2)
@@ -649,26 +649,13 @@ output$xlablineplot <- renderText({
     		filename = "HR_comoproject.csv",
 			content <- function(file) {
     			file.copy("DATA/temp.txt", file)
-  			}  
-  	)	
+  			}
+  	)
 
 
 
 
 
 
-# Close the ShinyServer  
+# Close the ShinyServer
 })
-  	  	
-
-
-
-
-
-
-
-
-
-
-
-
