@@ -648,7 +648,7 @@ output$xlablineplot <- renderText({
 		output$load_ex_format1 <- downloadHandler(
     		filename = "HR_comoproject.csv",
 			content <- function(file) {
-    			file.copy("DATA/temp.txt", file)
+    			file.copy("DATA/pairwiseHR.txt", file)
   			}
   	)
 

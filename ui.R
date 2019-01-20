@@ -27,7 +27,7 @@ tagList(
 			"Copyright © 2017 The COMO Project",
 			br(), br(),br(),
 			includeScript("google-analytics.js")
-			
+
 		),
 		br(),br()
 	),
@@ -47,7 +47,7 @@ tagList(
 
 
 
-	
+
 # #########
 #	TAB  INTRO
 # #########
@@ -62,7 +62,7 @@ tagList(
 					br(),
 					column(6, offset=0, align="justify",
 						h5("As part of the ", a("Niels Bohr Professorship", href="http://econ.au.dk/the-national-centre-for-register-based-research/niels-bohr-professorship/"), "we are exploring patterns of comorbidity (COMO) within treated mental disorders. Over the next few years we will explore different ways of describing the complex patterns of comorbidity between mental disorders. In particular, we wish to develop interactive data visualizations")
-					), 
+					),
 					column(6, offset=0, align="justify",
 						h5("that will allow the research community greater flexibility in exploring the multidimensional nature of the COMO. Firstly, we will explore COMO within the ", a("Danish Psychiatric Central Research Register", href="https://www.ncbi.nlm.nih.gov/pubmed/21775352"), "(DNPR), one of the world’s oldest nationwide hospital registries.")
 					),
@@ -96,9 +96,9 @@ tabPanel("Methods",
 	# -------------------------------------------------------------------------------------
 	# ===  ROW : Time lapse + Circle Packing explaining ICD10 OR table with link ICD10 - ICD8
 	fluidRow(align="center",
-		
+
 		br(),br(),br(),br(),
-		
+
 		# title
 		fluidRow(column(5, offset=1,  align="left", id="definition",
 			h2( "1. Key features of the Danish registers"),
@@ -107,7 +107,7 @@ tabPanel("Methods",
 
 		# image
 		br(),br(),
-		column(8, offset=2, align="justify", 
+		column(8, offset=2, align="justify",
 			h5("Since 1968 , the ", a("Danish Civil Registration System", href="https://www.ncbi.nlm.nih.gov/pubmed/21775345"), " has maintained information on all residents, including sex, date of birth, continuously updated information on vital status, and a unique personal identification number that can be used to link information from various national registries."),
 			br(),
 			h5("Danish health registers provide approved researchers access to anonymized person-level information on access to mental health care via inpatient, outpatient, and emergency settings. Our study was built on a sampling frame that provides an extended period to identify prevalent cases prior to the year 2000. In addition, from 2000 to 2016, there has been a period of observation of incident (new) cases, that can be confidently identified using the International Classification of Diseases (ICD)."),
@@ -125,12 +125,12 @@ tabPanel("Methods",
 		br(), br(),
 		dataTableOutput('ICD10table' , width="80%") %>% withSpinner( color= "#2ecc71") ,
 		h3(tags$u(tags$b("Figure 2")),": The 10 mental disorder groups studied with their ICD10 and ICD8 codes."),
-		
+
 		# Bubble
 		column(6, offset=3, ggiraphOutput("plot_circlepack", height = "800px", width="800px") ),
 		column(2, br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), h3(tags$u(tags$b("Figure 3")),": The relative occurence of each mental disorders. Hover over the bubble to see the number of cases with each disorder"))
 	),
-	
+
 
 	# Tree
 	fluidRow(
@@ -138,7 +138,7 @@ tabPanel("Methods",
 		column(9, align="left", collapsibleTreeOutput("tree", height="600px", width="100%") %>% withSpinner( color= "#2ecc71") )
 	),
 
-        
+
 
 
 	fluidRow(
@@ -152,7 +152,7 @@ tabPanel("Methods",
 			h5("From this point onwards, we use “disorder” to describe each group of specific diagnoses presented above. For each individual in the study, the date of onset for each disorder was defined as the date of first contact (inpatient, outpatient, or emergency visit)."),
 			br()
 		)
-	),	
+	),
 
 	fluidRow(
 		br(),br(),br(),
@@ -169,7 +169,7 @@ tabPanel("Methods",
 			br()
 		)
 	),
-	
+
 	fluidRow(
 		br(),br(),br(),
 		column(8, offset=1,  align="left",
@@ -187,16 +187,16 @@ tabPanel("Methods",
 			br(),
 			h5("All analyses were performed on the secured platform of Statistics Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA)."),
 			br(),br()
-			
+
 		)
 	),
 	br(),
-	fluidRow(align="center", 
+	fluidRow(align="center",
 		downloadButton("load_ex_format1", label = "Download"),
-		actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://github.com/holtzy/the-NB-COMO-Project';"), 
-		actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://www.ncbi.nlm.nih.gov/pubmed/';"), 
+		actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://plana-ripoll.github.io/NB-COMO/';"),
+		actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://jamanetwork.com/journals/jamapsychiatry/fullarticle/2720421';"),
 		br(),br(),
-		column(10, offset=1, dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") ) 
+		column(10, offset=1, dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") )
 	)
 ),
 
@@ -230,7 +230,7 @@ tabPanel("Results",
 	fluidRow(align="center",
 		column(6, offset=3,  align="center",
 			br(), br(),
-			h5("We estimated hazard ratios between each pair of disorders. Note that all estimates are over 1, meaning that being diagnosed with one of the disorders increased the risk of a subsequent diagnosis with each of the other disorders."), 
+			h5("We estimated hazard ratios between each pair of disorders. Note that all estimates are over 1, meaning that being diagnosed with one of the disorders increased the risk of a subsequent diagnosis with each of the other disorders."),
 			br(),
 			h5("The plot below shows the distribution of hazard ratios for all COMO pairs."),
 			br()
@@ -241,7 +241,7 @@ tabPanel("Results",
 		br(),
 		radioGroupButtons("sex_longbar", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 		column(6, offset=3, plotlyOutput("plot_longbar", height = "500px", width="900") %>% withSpinner( color= "#2ecc71") ),
-		column(2, br(), br(), 
+		column(2, br(), br(),
 			h3(tags$u(tags$b("Figure 5")),": Distribution of Hazard Ratios. Each dot represents a pair of disorder."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = "log_dotplothisto",   label = "Kind of scale:", choices=c("Log Scale"="log", "Linear Scale"="normal"), selected="normal"),
@@ -250,7 +250,7 @@ tabPanel("Results",
 
 		)
 	),
-	br(),br(),br(),br(),	
+	br(),br(),br(),br(),
 
 
 
@@ -270,7 +270,7 @@ tabPanel("Results",
 		column(6, offset=3,  align="center",
 			br(), br(),
 			h5("This Sankey diagram shows the associations between all possible combinations of mental disorders. Prior-disorders are represented on the left, while later-disorders are on the right"),
-			br(), 
+			br(),
 			h5("It is possible to examine the association between each prior-disorder and later-disorder. To see the hazard ratios, hover your mouse over the connecting threads. The different disorders are colour-coded. The Sankey diagram will automatically rearrange the order of prior- and later-disorders to minimize cross-overs. Move the slider below figure 6 to examine COMO pairs with effect sizes larger than a specific value. Note that relative risks are different than absolute risks."),
 			br()
 		)
@@ -282,20 +282,20 @@ tabPanel("Results",
 				column(6, h6(align="left", "prior-disorders")),
 				column(6, h6(align="right", "later-disorders"))
 			),
-			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%") %>% withSpinner( color= "#2ecc71"), 
+			sankeyNetworkOutput("plot_sankey", height = "800px", width="100%") %>% withSpinner( color= "#2ecc71"),
 			h3(tags$u(tags$b("Figure 6")),": Sankey diagram showing the general flows between Disorder Groups.")
 	)),
 
 	fluidRow(
-		column(4, offset=4,	align="center",		
+		column(4, offset=4,	align="center",
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 					selectInput(inputId = 'model_sankey', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 			),
-			
+
 			br(),
 			radioGroupButtons("sex_sankey", label = NULL, choices=c("Women"="women", "Men"="men", "All"="all"), selected="all"),
 			sliderInput("sankey_thres", "", min=1, max=30, value=1, ticks=F),
-			h3("Use this slider to display Hazard Ratio over a certain value")				
+			h3("Use this slider to display Hazard Ratio over a certain value")
 		)
 	),
 	br(),br(),
@@ -324,11 +324,11 @@ tabPanel("Results",
 
 	fluidRow(
 		column(8, offset=1,  align="center",
-			plotlyOutput("plot_heat2", height=900, width=1000) %>% withSpinner( color= "#2ecc71"), 
+			plotlyOutput("plot_heat2", height=900, width=1000) %>% withSpinner( color= "#2ecc71"),
 			br()
 		),
-		column(2, 
-			br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),br(), br(), 
+		column(2,
+			br(), br(),br(), br(), br(), br(),br(), br(), br(), br(),br(), br(),
 			h3(tags$u(tags$b("Figure 7")),": Heatmap displaying hazard ratios (HR) between disorder pairs. Prior-disorders are located at the bottom, later-disorders on the left."),
 			br(),
 			radioGroupButtons("sex_heatmap", label = NULL, choices=c("Men"="men", "Women"="women", "All"="all"), direction='horizontal', selected="all"),
@@ -369,8 +369,8 @@ tabPanel("Results",
 	br(), br(),
 	fluidRow(align="center",
 		column(6, offset=3, plotOutput("plot_symbar", height = 700, width="90%") %>% withSpinner( color= "#2ecc71")),
-		column(2, offset=0, 
-			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(), 
+		column(2, offset=0,
+			br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),br(),
 			h3(tags$u(tags$b("Figure 8")),": Description of the symmetry between Disorder Groups. Hazard ratio between all possible disorders and your selected disorder are represented on the left panel and vice-versa."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = 'model_symmetry', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
@@ -414,7 +414,7 @@ tabPanel("Results",
 		br(),
 		column(6, offset=3, h3( tags$u(tags$b("Figure 9")),": Evolution of hazard ratios over time. 0-6m: first sixth months after exposure, 1-2y: from first to second year after exposure. Choose exposure on top of the figure. Results are displayed outcome per outcome."))
 	),
-	fluidRow(column(2, offset=5, align="center",	
+	fluidRow(column(2, offset=5, align="center",
 		dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
 				selectInput(inputId = 'model_evolution', label = 'Model used to compute HR', choices = c("Model A: adjusting for age, sex and calendar time"="1", "Model B: further adjusting for other mental disorders"="2") )
 		)
@@ -452,11 +452,11 @@ tabPanel("Results",
 		br(),
 		h6("Choose exposure: "),
 		radioGroupButtons( "disease_CIP_plot", label = NULL, choices=c( "Organic"="Organic disorders", "Substance"="Substance use", "Schizophrenia"="Schizophrenia and related", "Mood"="Mood disorders", "Neurotic"="Neurotic disorders", "Eating"="Eating disorders", "Personality"="Personality disorders", "Intellectual Dis."="Intellectual Disabilities", "Developmental"="Developmental disorders", "Behaviour"="Behavioral disorders"), direction='horizontal', selected="Mood disorders"),
-		column(6, offset=3, 
+		column(6, offset=3,
 			h3( tags$u(tags$b("Figure 10.a")),": Evolution of cumulative incidence proportion (CIP, Y axis) over time (in years after exposure, X axis). Please choose exposure on top of the figure. Results are displayed outcome per outcome. You can split this relationship per age range using the 'more' button below.")
 		)
 	),
-	fluidRow(align="center", 
+	fluidRow(align="center",
 		plotOutput("plot_CIP_a", height = "800px", width="70%", click = "plot1_click")
 	),
 	fluidRow(column(6, offset=3, align="center",
@@ -505,7 +505,7 @@ tabPanel("Results",
 			plotlyOutput("plot_sexcomp", height = "700px", width="90%"),
 			br()
 		),
-		column(3, align="left", 
+		column(3, align="left",
 			br(),br(),br(),br(),br(),br(),br(),br(),br(),
 			h3(tags$u(tags$b("Figure 11")),": Comparison of hazard ratios between males and females. Each hazard ratio is represented by a point and 95% confidence intervals (horizontal and vertical lines)."),
 			dropdownButton(circle = TRUE, icon = icon("plus"), width = "300px", tooltip = tooltipOptions(title = "More options available"),
@@ -534,12 +534,12 @@ tabPanel("Meet the team",
 	br(),br(),
 
 	fluidRow( align="left",
-			column(6, offset=3, 
+			column(6, offset=3,
 				h2("Core team"),
 				hr(),
 				tags$ul(
-   					tags$li(h5(a("Oleguer Plana Ripoll",href="http://pure.au.dk/portal/en/persons/id(bdf4b27a-e767-49e7-9c8f-3314033a15b2).html"))), 
-   					tags$li(h5(a("Yan Holtz",href="https://www.linkedin.com/in/yan-holtz-2477534a"))), 
+   					tags$li(h5(a("Oleguer Plana Ripoll",href="http://pure.au.dk/portal/en/persons/id(bdf4b27a-e767-49e7-9c8f-3314033a15b2).html"))),
+   					tags$li(h5(a("Yan Holtz",href="https://www.linkedin.com/in/yan-holtz-2477534a"))),
    					tags$li(h5(a("John McGrath",href="http://researchers.uq.edu.au/researcher/6724")))
 				)
 			)
@@ -548,13 +548,13 @@ tabPanel("Meet the team",
 
 
 	fluidRow( align="left",
-			column(6, offset=3, 
+			column(6, offset=3,
 				h2("NCRR team"),
 				hr(),
 				tags$ul(
-   					tags$li(h5(a("Carsten Bøcker Pedersen",href="http://pure.au.dk/portal/en/persons/id(2d0e5aa0-9f34-4a6e-9adc-317eb444e801).html"))), 
-   					tags$li(h5(a("Esben Agerbo",href="http://pure.au.dk/portal/en/persons/id(5b08ed69-ad64-469f-a5b3-3407bf3c4b04).html"))), 
-   					tags$li(h5(a("Thomas Munk Laursen",href="http://pure.au.dk/portal/en/persons/id(366752b6-7172-46ab-9feb-f8f7eadce49f).html"))), 
+   					tags$li(h5(a("Carsten Bøcker Pedersen",href="http://pure.au.dk/portal/en/persons/id(2d0e5aa0-9f34-4a6e-9adc-317eb444e801).html"))),
+   					tags$li(h5(a("Esben Agerbo",href="http://pure.au.dk/portal/en/persons/id(5b08ed69-ad64-469f-a5b3-3407bf3c4b04).html"))),
+   					tags$li(h5(a("Thomas Munk Laursen",href="http://pure.au.dk/portal/en/persons/id(366752b6-7172-46ab-9feb-f8f7eadce49f).html"))),
    					tags$li(h5(a("Preben Bo Mortensen",href="http://pure.au.dk/portal/en/persons/id(59099748-c5c8-4c1c-8bcb-023f8c51a090).html")))
 				)
 			)
@@ -591,9 +591,9 @@ tabPanel("Meet the team",
 
 	# -------------------------------------------------------------------------------------
 	# === 9/ Footer
-	
 
-	
+
+
 	# -------------------------------------------------------------------------------------
 
 
