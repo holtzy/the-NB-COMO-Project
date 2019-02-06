@@ -183,7 +183,7 @@ tabPanel("Methods",
 			br(),
 			h5("We further adjusted for the interaction between type and number of co-occurring disorders, but the results were substantially the same as in model B (data not shown). Additionally, we included an interaction term between exposure to a prior-disorder and sex in order to obtain sex-specific estimates and test for differences between males and females. When the rates among the exposed and unexposed are not proportional over time, the Cox proportional hazards model estimates can be interpreted as an average HR over the entire follow-up period. However, we further investigated if the association differed depending on the time since onset of the prior-disorder (i.e. lagged HRs)."),
 			br(),
-			h5("Finally, in order to quantitate the absolute risk of developing the later-disorder, we estimated the cumulative incidence proportion of diagnosis with a later-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time. These estimates were stratified by sex and age (at onset of the prior-disorder) groups (<20, 20-40, 40-60, 60-80, and >=80 years) using competing risks survival analyses to account for individual’s simultaneously risk of developing the disorder, dying or emigrating."),
+			h5("Finally, in order to quantitate the absolute risk of developing the later-disorder, we estimated the cumulative incidence proportion (CIP) of diagnosis with a later-disorder after being diagnosed with a prior-disorder. Cumulative incidences can be interpreted as the percentage of individuals diagnosed with prior-disorder who develop the later-disorder after a specific time. These estimates were stratified by sex and age (at onset of the prior-disorder) groups (<20, 20-40, 40-60, 60-80, and >=80 years) using competing risks survival analyses to account for individual’s simultaneously risk of developing the disorder, dying or emigrating."),
 			br(),
 			h5("All analyses were performed on the secured platform of Statistics Denmark using R version 3.2.2 and STATA/MP version 13.1 (Stata Corporation, College Station, Texas, USA)."),
 			br(),br()
@@ -196,8 +196,10 @@ tabPanel("Methods",
 		downloadButton("load_ex_format2", label = "Download CIP data"),
 		actionButton(inputId='ab1', label="Github", icon = icon("github"), onclick ="location.href='https://plana-ripoll.github.io/NB-COMO/';"),
 		actionButton(inputId='ab1', label="Paper", icon = icon("file-o"), onclick ="location.href='https://jamanetwork.com/journals/jamapsychiatry/fullarticle/2720421';"),
+		br(),br(),br(),br(),br(),br(),
+		column(10, offset=1, h1("Hazard Ration Data (HR):"), dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") ),
 		br(),br(),
-		column(10, offset=1, dataTableOutput('raw_data') %>% withSpinner( color= "#2ecc71") )
+		column(10, offset=1, br(),br(),br(),br(), h1("Cumulative Incidence Proportion data (CIP):"), dataTableOutput('raw_data_CIP') %>% withSpinner( color= "#2ecc71") )
 	)
 ),
 

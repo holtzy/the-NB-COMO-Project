@@ -644,19 +644,37 @@ output$xlablineplot <- renderText({
 			)
 		})
 
+
+		# Show CIP in a table
+		observe({
+
+			don <- CIP %>% mutate(
+				cip = round(cip, 2),
+				cip_low = round(cip_low, 2),
+				cip_high = round(cip_high, 2)
+				) %>%
+				select(outcome2, exposure2, sex, age_group, cip, cip_low, cip_high)
+			colnames(don) <- c("outcome_id", "exposure_id", "sex", "age group", "CIP", "IC left", "IC_right")
+
+			# render the table
+			output$raw_data_CIP <- DT::renderDataTable(
+					DT::datatable( don , rownames = FALSE , filter = 'top', options = list(pageLength = 10, scrollX = TRUE )  )
+			)
+		})
+
 		# Allow user to download it
 		output$load_ex_format1 <- downloadHandler(
-    		filename = "HR_comoproject.csv",
+    		filename = "HR_comoproject.xlsx",
 			content <- function(file) {
-    			file.copy("DATA/pairwiseHR.txt", file)
+    			file.copy("DATA/pairwiseHR.xlsx", file)
   			}
   	)
 
 		# Allow user to download it
 		output$load_ex_format2 <- downloadHandler(
-    		filename = "CIP_comoproject.csv",
+    		filename = "CIP_comoproject.xlsx",
 			content <- function(file) {
-    			file.copy("DATA/CIP_data.txt", file)
+    			file.copy("DATA/CIP_data.xlsx", file)
   			}
   	)
 
