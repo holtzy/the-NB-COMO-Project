@@ -35,13 +35,13 @@ library(collapsibleTree)
 # 1- LOAD DATA
 
 # data = HR of oleguer give in October
-data=read.table(file="DATA/pairwiseHR.txt" , header=T, sep=";")	
+data=read.table(file="DATA/pairwiseHR.txt" , header=T, sep=";")
 
-# In data I remove the useless 'Exposed to ' 
-data=data %>% mutate(exposure2=gsub("Exposed to ", "", exposure2)) 
+# In data I remove the useless 'Exposed to '
+data=data %>% mutate(exposure2=gsub("Exposed to ", "", exposure2))
 
 # I reorder the levels in data to respect the ICD10 classification order.
-mylevels = c("Organic disorders", "Substance use", "Schizophrenia and related", "Mood disorders",  "Neurotic disorders", "Eating disorders", "Personality disorders", "Intellectual Disabilities", "Developmental disorders", "Behavioral disorders")     
+mylevels = c("Organic disorders", "Substance use", "Schizophrenia and related", "Mood disorders",  "Neurotic disorders", "Eating disorders", "Personality disorders", "Intellectual Disabilities", "Developmental disorders", "Behavioral disorders")
 data = data %>% mutate( outcome2 = factor(outcome2, levels=mylevels)) %>% mutate( exposure2 = factor(exposure2, levels=mylevels))
 
 
@@ -55,15 +55,15 @@ data = data %>% mutate( outcome2 = factor(outcome2, levels=mylevels)) %>% mutate
 my_palette = viridis(10)
 my_palette = rev(my_palette)
 color_attribution=c(
-	"Organic disorders" = my_palette[1], 
-	"Substance use" = my_palette[2], 
-	"Schizophrenia and related" = my_palette[3], 
-	"Mood disorders" = my_palette[4],  
-	"Neurotic disorders" = my_palette[5], 
-	"Eating disorders" = my_palette[6], 
-	"Personality disorders" = my_palette[7], 
-	"Intellectual Disabilities" = my_palette[8], 
-	"Developmental disorders" = my_palette[9], 
+	"Organic disorders" = my_palette[1],
+	"Substance use" = my_palette[2],
+	"Schizophrenia and related" = my_palette[3],
+	"Mood disorders" = my_palette[4],
+	"Neurotic disorders" = my_palette[5],
+	"Eating disorders" = my_palette[6],
+	"Personality disorders" = my_palette[7],
+	"Intellectual Disabilities" = my_palette[8],
+	"Developmental disorders" = my_palette[9],
 	"Behavioral disorders" = my_palette[10]
 )
 
@@ -94,8 +94,3 @@ CIP$outcome2 <- gsub("Substance abuse", "Substance use", CIP$outcome2)
 CIP$exposure2 <- gsub("Substance abuse", "Substance use", CIP$exposure2)
 CIP$outcome2 <- gsub("Mental retardation", "Intellectual Disabilities", CIP$outcome2)
 CIP$exposure2 <- gsub("Mental retardation", "Intellectual Disabilities", CIP$exposure2)
-
-
-
-
-

@@ -640,7 +640,7 @@ output$xlablineplot <- renderText({
 
 			# render the table
 			output$raw_data <- DT::renderDataTable(
-					DT::datatable( head(don) , rownames = FALSE , filter = 'top', options = list(pageLength = 10, dom = 'ft', scrollX = TRUE )  )
+					DT::datatable( don , rownames = FALSE , filter = 'top', options = list(pageLength = 10, scrollX = TRUE )  )
 			)
 		})
 
@@ -652,6 +652,13 @@ output$xlablineplot <- renderText({
   			}
   	)
 
+		# Allow user to download it
+		output$load_ex_format2 <- downloadHandler(
+    		filename = "CIP_comoproject.csv",
+			content <- function(file) {
+    			file.copy("DATA/CIP_data.txt", file)
+  			}
+  	)
 
 
 
